@@ -1,0 +1,117 @@
+@import 'tailwindcss';
+
+/*
+ * Ariya design tokens. See DESIGN.md for intent.
+ * The default Tailwind palette is removed on purpose: if a colour is not
+ * listed here it does not exist in this product.
+ */
+@theme {
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-white: #ffffff;
+
+  --color-paper: #f4eee3;
+  --color-paper-2: #ebe2d2;
+  --color-card: #fbf8f2;
+  --color-line: #d8ccb8;
+  --color-line-strong: #b7a78e;
+
+  --color-ink: #1b1612;
+  --color-ink-soft: #564c42;
+  --color-ink-faint: #8a7d6e;
+
+  --color-indigo: #1f2a5a;
+  --color-indigo-deep: #121a3b;
+  --color-indigo-soft: #dde0ee;
+
+  --color-clay: #b0412a;
+  --color-clay-deep: #8f3220;
+  --color-clay-soft: #f3d9ce;
+
+  --color-ochre: #d99a2b;
+  --color-ochre-soft: #f5e3bd;
+
+  --color-palm: #2f5a3b;
+  --color-palm-soft: #d6e4d3;
+
+  --font-*: initial;
+  --font-sans: 'Bricolage Grotesque Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
+
+  --radius-*: initial;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-full: 9999px;
+
+  --shadow-*: initial;
+  --shadow-stamp: 0 1px 0 rgb(27 22 18 / 0.06), 0 18px 30px -18px rgb(27 22 18 / 0.45);
+  --shadow-lift: 0 1px 0 rgb(27 22 18 / 0.05), 0 8px 18px -12px rgb(27 22 18 / 0.35);
+
+  --animate-marquee: marquee 38s linear infinite;
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: 'ss01';
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--color-ochre);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-indigo);
+    outline-offset: 2px;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    font: inherit;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Perforated ticket edge: two notches cut into the sides at the tear line. */
+@utility ticket-notch {
+  --notch: 11px;
+  --tear: 9rem;
+  mask:
+    radial-gradient(circle var(--notch) at 0 var(--tear), transparent 98%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle var(--notch) at 100% var(--tear), transparent 98%, #000) right / 51% 100% no-repeat;
+}
+
+/* Masked elements lose box-shadow, so tickets get a filter shadow on a wrapper. */
+@utility drop-stamp {
+  filter: drop-shadow(0 1px 0 rgb(27 22 18 / 0.08)) drop-shadow(0 14px 16px rgb(27 22 18 / 0.18));
+}
