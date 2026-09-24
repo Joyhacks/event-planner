@@ -281,6 +281,7 @@ create index tickets_order_idx on public.tickets (order_id);
 create table public.event_staff (
   event_id    uuid not null references public.events (id) on delete cascade,
   user_id     uuid not null references auth.users (id) on delete cascade,
+  email       text not null default '',
   added_by    uuid not null references auth.users (id),
   created_at  timestamptz not null default now(),
   primary key (event_id, user_id)
@@ -945,7 +946,8 @@ begin
   if who is null then
     return false;
   end if;
-  insert into public.event_staff (event_id, user_id, added_by) values (p_event, who, auth.uid())
+  insert into public.event_staff (event_id, user_id, email, added_by)
+  values (p_event, who, lower(btrim(p_email)), auth.uid())
   on conflict do nothing;
   return true;
 end;

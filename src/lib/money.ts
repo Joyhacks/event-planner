@@ -29,3 +29,14 @@ export function parseAmount(input: string): number {
   const mult = match[2] === 'm' ? 1_000_000 : match[2] === 'k' ? 1_000 : 1
   return Math.round(base * mult)
 }
+
+/** Marketplace amounts are stored in kobo. */
+export function naira(kobo: number): string {
+  return formatMoney(kobo / 100, 'NGN')
+}
+
+/** "5,000" or "5k" typed by a seller, in naira, to kobo. NaN when unreadable. */
+export function nairaInputToKobo(input: string): number {
+  const n = parseAmount(input)
+  return Number.isNaN(n) ? NaN : n * 100
+}

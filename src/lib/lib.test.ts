@@ -114,3 +114,13 @@ describe('sharing and export', () => {
     expect(toCsv([['Ade "Big" O', '=HYPERLINK("x")']])).toBe('"Ade ""Big"" O","\'=HYPERLINK(""x"")"')
   })
 })
+
+describe('phone numbers', () => {
+  it('normalises Nigerian numbers to E.164', async () => {
+    const { toE164Nigeria } = await import('./phone')
+    expect(toE164Nigeria('0803 123 4567')).toBe('2348031234567')
+    expect(toE164Nigeria('+234 803 123 4567')).toBe('2348031234567')
+    expect(toE164Nigeria('+44 7700 900123')).toBe('447700900123')
+    expect(toE164Nigeria('12345')).toBeNull()
+  })
+})

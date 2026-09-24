@@ -6,23 +6,26 @@ collection, vendors, the order of events and a budget in local currency.
 
 ## What's inside
 
-| Area | What it does |
-|---|---|
-| Landing page | Marketing page at `/` |
-| My events | Countdown to the next event, all events shown as tickets |
-| Event overview | Summary numbers and suggested next steps; edit or delete the event |
-| Guests | RSVP tracking, plus-ones, filters, search, CSV export for the gate |
-| Budget | Planned vs paid per line, inline editing, category breakdown, over-budget warning |
-| Vendors | Shortlist from the directory and track status from enquired to fully paid |
-| Order of events | Timeline for the MC, DJ and caterer |
-| Aso-ebi | Fabric, price and colours; who paid and who collected; share to WhatsApp |
+**Planner** (`/app`, saved in the browser for now): guest list with RSVPs,
+budget in naira, vendors, order of events, aso-ebi ledger with WhatsApp share.
 
-Data is saved in the browser (localStorage) for now. See *Next steps*.
+**Marketplace** (needs the Supabase backend, see `supabase/README.md`):
+
+| Who | What they can do |
+|---|---|
+| Buyers | Browse events, buy single or table tickets, add aso-ebi, apply promo codes, pay with Paystack, keep QR tickets, request refunds for postponed events, vote |
+| Sellers | Apply with a Paystack-verified bank account; build events with ticket types, early bird, free VIP comps, promo codes, promoter links, custom questions and fee choice; sell aso-ebi; run voting contests; see sales and promoter commissions; refund; postpone or cancel; manage door staff |
+| Door staff | Scan QR codes by camera or type the code; keeps working offline and syncs later |
+| Admins | Approve or reject sellers, set commission and fees, review flagged payments, send refunds, suspend sellers |
+
+Money never sits with Ariya: Paystack split payments send each seller's share
+to their own bank account. See `ROADMAP.md` for the reasoning.
 
 ## Stack
 
 React 19, TypeScript (strict), Vite, Tailwind CSS v4 with custom tokens,
-Archivo + Bungee (self-hosted),
+Archivo + Bungee (self-hosted), Supabase (Postgres, Auth, Realtime, Storage,
+Edge Functions), Paystack, TanStack Query,
 React Router (route-level code splitting), Zustand, Vitest.
 
 ## Run it
@@ -56,10 +59,9 @@ src/
 
 Design rules are in [DESIGN.md](./DESIGN.md).
 
-## Next steps before a public launch
+## Before a public launch
 
-1. **Accounts and a real database** (e.g. Supabase) so a planning committee can share one event across phones. Every table needs row-level security scoped to the event's members.
-2. **Real vendor directory.** The listings in `src/data/vendors.ts` are demo data and are labelled as such in the UI.
-3. **Guest RSVP link** so guests can reply themselves.
-4. **Paystack or Flutterwave** for aso-ebi payments, with verified webhooks.
-5. Analytics and error monitoring (for example Sentry).
+1. Follow `supabase/README.md` end to end, with Paystack **test** keys first.
+2. Have a lawyer review `src/pages/legal/legalContent.ts` and fill in the company details.
+3. Confirm current Paystack fees and set them in **Admin → Commission & fees**.
+4. Make one real purchase, scan it at a door, cancel, and confirm the refund lands.

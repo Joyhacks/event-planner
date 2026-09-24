@@ -159,7 +159,7 @@ site_url = "http://localhost:5173"
 # The public URL that Auth serves on. Defaults to the API external URL with `/auth/v1` appended.
 # external_url = ""
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-additional_redirect_urls = ["https://127.0.0.1:3000"]
+additional_redirect_urls = ["http://localhost:5173/**", "http://127.0.0.1:5173/**"]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
 # JWT issuer URL. If not set, defaults to auth.external_url.
@@ -256,16 +256,16 @@ otp_expiry = 3600
 [auth.sms]
 # Allow/disallow new user signups via SMS to your project.
 enable_signup = false
-# If enabled, users need to confirm their phone number before signing in.
-enable_confirmations = false
+# Must stay true: free votes rely on phones being confirmed with an OTP.
+enable_confirmations = true
 # Template for sending OTP to users
 template = "Your code is {{ .Code }}"
 # Controls the minimum amount of time that must pass before sending another sms otp.
 max_frequency = "5s"
 
-# Use pre-defined map of phone number to OTP for testing.
-# [auth.sms.test_otp]
-# 4152127777 = "123456"
+# Use pre-defined map of phone number to OTP for testing (local only).
+[auth.sms.test_otp]
+2348031234567 = "123456"
 
 # Configure logged in session timeouts.
 # [auth.sessions]
@@ -285,10 +285,12 @@ max_frequency = "5s"
 # uri = "pg-functions://<database>/<schema>/<hook_name>"
 
 # Configure one of the supported SMS providers: `twilio`, `twilio_verify`, `messagebird`, `textlocal`, `vonage`.
+# Local development uses test_otp above, so no SMS is actually sent.
+# In production, configure an SMS provider in the Supabase dashboard.
 [auth.sms.twilio]
-enabled = false
-account_sid = ""
-message_service_sid = ""
+enabled = true
+account_sid = "local-test"
+message_service_sid = "local-test"
 # DO NOT commit your Twilio auth token to git. Use environment variable substitution instead:
 auth_token = "env(SUPABASE_AUTH_SMS_TWILIO_AUTH_TOKEN)"
 
