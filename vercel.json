@@ -1,3 +1,41 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    {
+      "source": "/e/:slug/vote/:n",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|telegrambot|slackbot|linkedinbot|discordbot|pinterestbot|skypeuripreview|vkshare|applebot|embedly|redditbot|snap url preview).*"
+        }
+      ],
+      "destination": "/api/share?slug=:slug&n=:n&vote=1"
+    },
+    {
+      "source": "/e/:slug/vote",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|telegrambot|slackbot|linkedinbot|discordbot|pinterestbot|skypeuripreview|vkshare|applebot|embedly|redditbot|snap url preview).*"
+        }
+      ],
+      "destination": "/api/share?slug=:slug&vote=1"
+    },
+    {
+      "source": "/e/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(whatsapp|facebookexternalhit|facebot|twitterbot|telegrambot|slackbot|linkedinbot|discordbot|pinterestbot|skypeuripreview|vkshare|applebot|embedly|redditbot|snap url preview).*"
+        }
+      ],
+      "destination": "/api/share?slug=:slug"
+    },
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
+  ]
 }
