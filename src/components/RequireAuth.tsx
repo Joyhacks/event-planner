@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link, Navigate, useLocation } from 'react-router-dom'
 import { useAuth, type Role } from '../lib/authContext'
-import { backendReady } from '../lib/supabase'
+import { backendReady } from '../lib/env'
 import { PageLoader } from './RouteStates'
 import { buttonClass } from './styles'
 

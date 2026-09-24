@@ -59,9 +59,28 @@ src/
 
 Design rules are in [DESIGN.md](./DESIGN.md).
 
+## Deploying on Vercel
+
+- `vercel.json` sends every page to the app, except that link-preview bots
+  (WhatsApp, Facebook, X, Telegram…) visiting `/e/…` get `api/share.ts`,
+  which returns the event's title, date, venue and photo so shared links
+  show a proper preview.
+- Environment variables: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, and
+  optionally `VITE_SENTRY_DSN` for error alerts (sentry.io, React project).
+
+## Custom domain
+
+1. Buy the domain: `.ng` / `.com.ng` from a NiRA-accredited registrar, or `.com`
+   from any registrar.
+2. Vercel → your project → **Settings → Domains** → add it, then add the DNS
+   records Vercel shows at your registrar. HTTPS is automatic.
+3. Update Supabase **Authentication → URL Configuration** (Site URL and
+   Redirect URLs) and the `APP_ORIGIN` function secret to the new domain.
+
 ## Before a public launch
 
-1. Follow `supabase/README.md` end to end, with Paystack **test** keys first.
+1. Follow `supabase/README.md` end to end, with Paystack **test** keys first,
+   including custom SMTP for sign-in emails.
 2. Have a lawyer review `src/pages/legal/legalContent.ts` and fill in the company details.
 3. Confirm current Paystack fees and set them in **Admin → Commission & fees**.
 4. Make one real purchase, scan it at a door, cancel, and confirm the refund lands.

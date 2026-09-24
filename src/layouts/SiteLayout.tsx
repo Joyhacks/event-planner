@@ -2,7 +2,7 @@ import { Link, NavLink, Outlet, ScrollRestoration } from 'react-router-dom'
 import { Logo } from '../components/Logo'
 import { buttonClass } from '../components/styles'
 import { useAuth } from '../lib/authContext'
-import { backendReady } from '../lib/supabase'
+import { backendReady } from '../lib/env'
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   `shrink-0 rounded-full px-3 py-1.5 text-sm font-bold whitespace-nowrap transition-colors ${

@@ -48,7 +48,7 @@ export function SalesTab({ event }: TabProps) {
           .from('orders')
           .select('id, reference, kind, status, total_kobo, buyer_name, buyer_email, buyer_phone, answers, created_at, tickets(code, holder_name, status, ticket_types(name))')
           .eq('event_id', event.id)
-          .neq('status', 'pending')
+          .not('status', 'in', '(pending,expired)')
           .order('created_at', { ascending: false }),
       )) as unknown as OrderRow[],
   })

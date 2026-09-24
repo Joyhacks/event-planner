@@ -1,12 +1,10 @@
 import { createClient } from '@supabase/supabase-js'
 
-const url = import.meta.env.VITE_SUPABASE_URL
-const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+import { SUPABASE_ANON_KEY, SUPABASE_URL } from './env'
 
-/** False until the Supabase project is connected (see supabase/README.md). */
-export const backendReady = Boolean(url && anonKey)
+export { backendReady } from './env'
 
-export const supabase = createClient(url ?? 'http://127.0.0.1:54321', anonKey ?? 'not-configured', {
+export const supabase = createClient(SUPABASE_URL ?? 'http://127.0.0.1:54321', SUPABASE_ANON_KEY ?? 'not-configured', {
   auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'pkce' },
 })
 

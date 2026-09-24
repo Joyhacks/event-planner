@@ -18,3 +18,4 @@ fi
 for f in supabase/migrations/*.sql; do run "$f"; done
 run supabase/tests/10_rls.sql
 run supabase/tests/20_marketplace.sql
+run supabase/tests/30_expiry.sql

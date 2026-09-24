@@ -19,6 +19,7 @@ password, region closest to your users (for Nigeria, London `eu-west-2`).
 2. `20260924000002_planner.sql`
 3. `20260924000003_marketplace.sql`
 4. `20260924000004_media_storage.sql`
+5. `20260924000005_expire_orders.sql` (also schedules a job every 10 minutes that tidies up unpaid orders)
 
 If one fails, stop and send the error; do not re-run it.
 
@@ -32,6 +33,18 @@ If one fails, stop and send the error; do not re-run it.
   (Twilio, Vonage or MessageBird) and enter its keys.
 - Keep **Confirm phone** ON. Free votes rely on it; with it off, a phone
   counts as verified without any code.
+
+### 3b. Sign-in emails (required before launch)
+Supabase's built-in email is only for testing and sends a handful of emails
+per hour. Connect a real sender:
+1. Create an account at resend.com, add your domain and add the DNS records it shows.
+2. Create an API key.
+3. Supabase → **Project Settings → Authentication → SMTP Settings** → enable
+   custom SMTP: host `smtp.resend.com`, port `465`, username `resend`,
+   password = the API key, sender `Ariya <hello@yourdomain>`.
+4. **Authentication → Rate Limits**: raise the email limit (e.g. 100/hour).
+5. **Authentication → Email Templates → Magic Link**: change the subject to
+   “Your Ariya sign-in link”.
 
 ### 4. Paystack
 In the Paystack dashboard (business account in the company's name):
@@ -89,7 +102,7 @@ node scripts/fake-paystack.mjs           # fake Paystack on :4010
 
 | Command | What it checks |
 |---|---|
-| `npm run test:db` | 91 SQL security and money checks on plain Postgres (needs PGHOST etc.) |
+| `npm run test:db` | 95 SQL security and money checks on plain Postgres (needs PGHOST etc.) |
 | `npm run e2e:payments` | 26 API checks: seller onboarding, split checkout, webhooks, refunds, live votes |
 | `npm run e2e:ui` | 24 browser checks as seller, admin, buyer and door staff |
 

@@ -28,6 +28,10 @@ and voting contests.
 | Contests: entry tickets → contestants, free + paid votes, realtime leaderboard, share cards | Done |
 | Aso-ebi sales at checkout with collection list | Done |
 | Terms, refund policy, privacy (NDPA) | Draft; needs lawyer review and company details |
+| WhatsApp/social link previews for events and contestants | Done |
+| Unpaid orders marked expired every 10 minutes (pg_cron) | Done |
+| Error monitoring (Sentry, optional) and smaller first load (Supabase loads only when needed) | Done |
+| Custom SMTP for sign-in emails, custom domain | Owner setup, steps in README |
 | Move planner to Supabase; invite committee | Next |
 | Ticket delivery by email/WhatsApp | Later (not requested) |
 | Seller payouts report export, analytics, error monitoring | Later |

@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider } from 'react-router-dom'
 import { AuthProvider } from './components/AuthProvider'
+import { initMonitoring } from './lib/monitoring'
 import { router } from './router'
 import '@fontsource-variable/archivo/wdth.css'
 import '@fontsource/bungee/400.css'
@@ -21,3 +22,5 @@ createRoot(document.getElementById('root')!).render(
     </QueryClientProvider>
   </StrictMode>,
 )
+
+initMonitoring()

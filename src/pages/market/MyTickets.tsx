@@ -67,7 +67,7 @@ function Tickets() {
           .from('orders')
           .select('id, reference, kind, status, total_kobo, created_at, event_id, events(title, status), order_items(item_type, quantity, collected, asoebi_items(name))')
           .eq('buyer_id', user!.id)
-          .neq('status', 'pending')
+          .not('status', 'in', '(pending,expired)')
           .order('created_at', { ascending: false }),
       )) as unknown as OrderRow[],
   })

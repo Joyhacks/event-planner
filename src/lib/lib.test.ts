@@ -124,3 +124,12 @@ describe('phone numbers', () => {
     expect(toE164Nigeria('12345')).toBeNull()
   })
 })
+
+describe('monitoring', () => {
+  it('strips query strings that may hold sign-in codes', async () => {
+    const { scrubUrl } = await import('./monitoring')
+    expect(scrubUrl('https://ariya.ng/account/tickets?code=secret')).toBe('https://ariya.ng/account/tickets')
+    expect(scrubUrl('https://ariya.ng/e/x')).toBe('https://ariya.ng/e/x')
+    expect(scrubUrl(undefined)).toBeUndefined()
+  })
+})
