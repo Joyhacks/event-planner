@@ -5,9 +5,9 @@ export function PageLoader() {
   return (
     <div className="grid min-h-[50vh] place-items-center" role="status" aria-live="polite">
       <span className="sr-only">Loading</span>
-      <svg viewBox="0 0 40 40" className="h-10 w-10 animate-spin text-ochre [animation-duration:2.4s]" aria-hidden="true">
-        <circle cx="20" cy="20" r="16" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="6 5" />
-        <circle cx="20" cy="20" r="7" fill="none" stroke="currentColor" strokeWidth="2" />
+      <svg viewBox="0 0 40 40" className="h-10 w-10 animate-spin text-ink [animation-duration:1.6s]" aria-hidden="true">
+        <circle cx="20" cy="20" r="16" fill="none" stroke="currentColor" strokeWidth="3" strokeDasharray="6 5" />
+        <circle cx="20" cy="20" r="7" fill="#ffc700" stroke="currentColor" strokeWidth="3" />
       </svg>
     </div>
   )
@@ -20,8 +20,8 @@ export function RouteError() {
 
   return (
     <main className="mx-auto flex min-h-screen max-w-xl flex-col justify-center px-6 py-20">
-      <p className="font-serif text-7xl text-clay italic">Ehn ehn.</p>
-      <h1 className="mt-4 text-2xl font-semibold">
+      <p className="font-sign text-6xl text-pink">Ehn ehn.</p>
+      <h1 className="font-display mt-4 text-2xl">
         {notFound ? 'We could not find that page.' : 'Something broke on our side.'}
       </h1>
       <p className="mt-2 text-ink-soft">

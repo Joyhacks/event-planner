@@ -8,7 +8,7 @@ import type {
   VendorStatus,
 } from './types'
 
-export type Motif = 'oniko' | 'eleko' | 'kente' | 'orbit'
+export type Motif = 'oniko' | 'eleko' | 'kente' | 'orbit' | 'checker'
 
 export interface EventTypeMeta {
   label: string
@@ -24,50 +24,50 @@ export const EVENT_TYPES: Record<EventType, EventTypeMeta> = {
   'trad-wedding': {
     label: 'Traditional wedding',
     short: 'Trad',
-    bg: '#1f2a5a',
-    fg: '#f4eee3',
-    accent: '#d99a2b',
+    bg: '#ffc700',
+    fg: '#0e0e0e',
+    accent: '#0e0e0e',
     motif: 'oniko',
   },
   'white-wedding': {
     label: 'White wedding',
     short: 'Wedding',
-    bg: '#ebe2d2',
-    fg: '#1b1612',
-    accent: '#b0412a',
+    bg: '#ffffff',
+    fg: '#0e0e0e',
+    accent: '#f0287a',
     motif: 'orbit',
   },
   owambe: {
     label: 'Owambe / birthday',
     short: 'Owambe',
-    bg: '#b0412a',
-    fg: '#fbf8f2',
-    accent: '#f5e3bd',
+    bg: '#f0287a',
+    fg: '#0e0e0e',
+    accent: '#0e0e0e',
     motif: 'kente',
   },
   naming: {
     label: 'Naming ceremony',
     short: 'Naming',
-    bg: '#d99a2b',
-    fg: '#1b1612',
-    accent: '#1f2a5a',
+    bg: '#008751',
+    fg: '#ffffff',
+    accent: '#ffc700',
     motif: 'eleko',
   },
   remembrance: {
     label: 'Remembrance / burial',
     short: 'Remembrance',
-    bg: '#2f5a3b',
-    fg: '#f4eee3',
-    accent: '#f5e3bd',
+    bg: '#0e0e0e',
+    fg: '#ffffff',
+    accent: '#ffffff',
     motif: 'eleko',
   },
   corporate: {
     label: 'Launch / corporate',
     short: 'Corporate',
-    bg: '#1b1612',
-    fg: '#f4eee3',
-    accent: '#d99a2b',
-    motif: 'orbit',
+    bg: '#2447d6',
+    fg: '#ffffff',
+    accent: '#ffc700',
+    motif: 'checker',
   },
 }
 
@@ -147,8 +147,9 @@ export const VENDOR_STATUS_LABEL: Record<VendorStatus, string> = {
 export const FABRIC_SWATCHES = [
   { name: 'Adire indigo', hex: '#1f2a5a' },
   { name: 'Camwood', hex: '#b0412a' },
-  { name: 'Ochre gold', hex: '#d99a2b' },
-  { name: 'Palm green', hex: '#2f5a3b' },
+  { name: 'Gold', hex: '#d9a21b' },
+  { name: 'Naija green', hex: '#008751' },
+  { name: 'Gele pink', hex: '#f0287a' },
   { name: 'Coral bead', hex: '#e0684b' },
   { name: 'Champagne', hex: '#e8d6b3' },
   { name: 'Wine', hex: '#6b1f33' },

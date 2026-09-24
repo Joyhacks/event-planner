@@ -44,8 +44,8 @@ function Setup({ event, onDone }: { event: PlannerEvent; onDone: () => void }) {
   return (
     <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
       <div className="lg:col-span-4">
-        <h2 className="font-serif text-4xl leading-tight">
-          Set up the <em className="text-clay">aso-ebi.</em>
+        <h2 className="font-display text-3xl leading-tight">
+          Set up the <em className="hl">aso-ebi.</em>
         </h2>
         <p className="mt-4 text-ink-soft">
           Pick the fabric and price once. Then track who ordered, who paid and who has collected, without digging
@@ -85,7 +85,7 @@ function Setup({ event, onDone }: { event: PlannerEvent; onDone: () => void }) {
           </Field>
         </div>
         <div className="flex gap-3">
-          <Button type="submit" variant="clay">
+          <Button type="submit" variant="danfo">
             Save aso-ebi
           </Button>
           {event.asoebi && (
@@ -137,14 +137,14 @@ function Ledger({ event, onEdit }: { event: PlannerEvent; onEdit: () => void }) 
 
   return (
     <div className="flex flex-col gap-12">
-      <section aria-label="Fabric" className="grid gap-8 border-b border-line pb-10 md:grid-cols-[auto_1fr_auto] md:items-center">
+      <section aria-label="Fabric" className="grid gap-8 rounded-lg border-2 border-ink bg-card p-6 shadow-hard sm:p-8 md:grid-cols-[auto_1fr_auto] md:items-center">
         <div className="flex -space-x-4" aria-hidden="true">
-          {(a.colors.length ? a.colors : ['#d8ccb8']).map((c) => (
-            <span key={c} className="h-20 w-20 rounded-full border-4 border-paper" style={{ background: c }} />
+          {(a.colors.length ? a.colors : ['#d9d6cb']).map((c) => (
+            <span key={c} className="h-20 w-20 rounded-full border-2 border-ink" style={{ background: c }} />
           ))}
         </div>
         <div>
-          <h2 className="font-serif text-4xl leading-tight">{a.fabric}</h2>
+          <h2 className="font-display text-3xl leading-tight">{a.fabric}</h2>
           <p className="mt-1 text-ink-soft">
             {money(a.pricePerSet)} per set{a.payTo ? ` · ${a.payTo}` : ''}
           </p>
@@ -170,37 +170,37 @@ function Ledger({ event, onEdit }: { event: PlannerEvent; onEdit: () => void }) 
           ['Still owed', money(s.owing)],
         ].map(([l, v], i) => (
           <div key={l} className="flex flex-col-reverse">
-            <dd className={`tabular mt-1 font-serif text-4xl ${i === 3 && s.owing > 0 ? 'text-clay' : ''}`}>{v}</dd>
-            <dt className="text-xs tracking-wider text-ink-faint uppercase">{l}</dt>
+            <dd className={`tabular mt-1 font-sign text-[1.35rem] sm:text-2xl xl:text-[2rem] ${i === 3 && s.owing > 0 ? 'text-red' : ''}`}>{v}</dd>
+            <dt className="text-[0.68rem] font-bold tracking-[0.12em] text-ink-faint uppercase">{l}</dt>
           </div>
         ))}
       </dl>
 
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
         <section aria-labelledby="buyers" className="min-w-0 lg:col-span-8">
-          <h2 id="buyers" className="font-serif text-3xl">Buyers</h2>
+          <h2 id="buyers" className="font-display text-2xl sm:text-[1.7rem]">Buyers</h2>
           {a.buyers.length === 0 ? (
             <p className="mt-6 text-ink-soft">No orders yet. Share the message and add people as they reply.</p>
           ) : (
-            <ul className="mt-5 border-t border-line">
+            <ul className="mt-5 overflow-hidden rounded-lg border-2 border-ink bg-card divide-y-2 divide-ink">
               {a.buyers.map((b) => (
-                <li key={b.id} className="flex flex-wrap items-center gap-x-5 gap-y-2 border-b border-line py-4">
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-medium">{b.name}</p>
+                <li key={b.id} className="flex flex-wrap items-center gap-x-5 gap-y-1 px-4 py-3">
+                  <div className="min-w-0 basis-[calc(100%-4.5rem)] sm:flex-1 sm:basis-auto">
+                    <p className="truncate font-bold">{b.name}</p>
                     <p className="tabular text-sm text-ink-soft">
                       {b.sets} {b.sets === 1 ? 'set' : 'sets'} · {money(b.sets * a.pricePerSet)}
                     </p>
                   </div>
-                  <Toggle checked={b.paid} onChange={(v) => updateBuyer(event.id, b.id, { paid: v })} label="Paid" name={b.name} />
-                  <Toggle checked={b.collected} onChange={(v) => updateBuyer(event.id, b.id, { collected: v })} label="Collected" name={b.name} />
                   <button
                     type="button"
                     onClick={() => removeBuyer(event.id, b.id)}
-                    className="grid h-10 w-10 place-items-center rounded-full text-ink-faint hover:bg-paper-2 hover:text-clay"
+                    className="grid h-10 w-10 place-items-center rounded-full text-ink-faint hover:bg-paper-2 hover:text-red sm:order-last"
                     aria-label={`Remove ${b.name}`}
                   >
                     <X size={16} aria-hidden="true" />
                   </button>
+                  <Toggle checked={b.paid} onChange={(v) => updateBuyer(event.id, b.id, { paid: v })} label="Paid" name={b.name} />
+                  <Toggle checked={b.collected} onChange={(v) => updateBuyer(event.id, b.id, { collected: v })} label="Collected" name={b.name} />
                 </li>
               ))}
             </ul>
@@ -208,8 +208,8 @@ function Ledger({ event, onEdit }: { event: PlannerEvent; onEdit: () => void }) 
         </section>
 
         <section aria-labelledby="add-buyer" className="lg:col-span-4">
-          <div className="bg-paper-2 p-6">
-            <h2 id="add-buyer" className="font-serif text-2xl">Add an order</h2>
+          <div className="rounded-lg border-2 border-ink bg-danfo-soft p-6">
+            <h2 id="add-buyer" className="font-display text-xl">Add an order</h2>
             <form onSubmit={submit} noValidate className="mt-5 flex flex-col gap-4">
               <Field label="Name" error={error}>
                 {(p) => <Input {...p} value={name} onChange={(e) => setName(e.target.value)} placeholder="Aunty Funke" />}
@@ -243,7 +243,7 @@ function Toggle({ checked, onChange, label, name }: { checked: boolean; onChange
       />
       <span
         aria-hidden="true"
-        className="relative h-6 w-10 rounded-full bg-line transition-colors peer-checked:bg-palm peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-indigo after:absolute after:top-1 after:left-1 after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-transform peer-checked:after:translate-x-4"
+        className="relative h-6 w-10 rounded-full border-2 border-ink bg-paper-2 transition-colors peer-checked:bg-green peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-blue after:absolute after:top-0.5 after:left-0.5 after:h-3.5 after:w-3.5 after:rounded-full after:border-2 after:border-ink after:bg-white after:transition-transform peer-checked:after:translate-x-4"
       />
       <span className={checked ? 'text-ink' : 'text-ink-soft'}>{label}</span>
     </label>

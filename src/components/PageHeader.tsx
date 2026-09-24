@@ -6,7 +6,7 @@ export function PageHeader({ eyebrow, title, actions }: { eyebrow?: string; titl
     <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
       <div>
         {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-        <h1 className="mt-2 font-serif text-5xl leading-none tracking-[-0.01em] sm:text-6xl">{title}</h1>
+        <h1 className="font-display mt-2 text-[2.4rem] leading-[0.95] sm:text-5xl">{title}</h1>
       </div>
       {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
     </div>

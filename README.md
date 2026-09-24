@@ -22,6 +22,7 @@ Data is saved in the browser (localStorage) for now. See *Next steps*.
 ## Stack
 
 React 19, TypeScript (strict), Vite, Tailwind CSS v4 with custom tokens,
+Archivo + Bungee (self-hosted),
 React Router (route-level code splitting), Zustand, Vitest.
 
 ## Run it

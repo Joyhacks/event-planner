@@ -35,7 +35,7 @@ export function EventForm({ initial, submitLabel, allowPast, onSubmit, onCancel 
   return (
     <form ref={formRef} onSubmit={handleSubmit} noValidate className="flex flex-col gap-10">
       <fieldset>
-        <legend className="text-[0.8rem] font-medium tracking-wide text-ink-soft uppercase">What are we celebrating?</legend>
+        <legend className="text-[0.72rem] font-bold tracking-[0.12em] uppercase">What are we celebrating?</legend>
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
           {(Object.keys(EVENT_TYPES) as EventType[]).map((key) => {
             const meta = EVENT_TYPES[key]
@@ -43,12 +43,17 @@ export function EventForm({ initial, submitLabel, allowPast, onSubmit, onCancel 
             return (
               <label
                 key={key}
-                className={`group relative flex h-24 cursor-pointer flex-col justify-end overflow-hidden rounded-xs p-3 transition-shadow has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-indigo ${
-                  checked ? 'ring-2 ring-ink ring-offset-2 ring-offset-paper' : 'opacity-80 hover:opacity-100'
+                className={`group relative flex h-24 cursor-pointer flex-col justify-end overflow-hidden rounded-md border-2 border-ink p-3 transition-[transform,box-shadow] has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-blue ${
+                  checked ? '-translate-x-0.5 -translate-y-0.5 shadow-hard' : 'hover:shadow-hard-sm'
                 }`}
                 style={{ background: meta.bg, color: meta.fg }}
               >
-                <Motif kind={meta.motif} color={meta.accent} opacity={0.4} />
+                <Motif kind={meta.motif} color={meta.accent} opacity={0.14} />
+                {checked && (
+                  <span aria-hidden="true" className="absolute top-2 right-2 grid h-6 w-6 place-items-center rounded-full border-2 border-ink bg-white text-xs font-black text-ink">
+                    ✓
+                  </span>
+                )}
                 <input
                   type="radio"
                   name="type"
@@ -57,7 +62,7 @@ export function EventForm({ initial, submitLabel, allowPast, onSubmit, onCancel 
                   onChange={() => set('type', key)}
                   className="sr-only"
                 />
-                <span className="relative text-sm leading-tight font-semibold">{meta.label}</span>
+                <span className="relative text-sm leading-tight font-extrabold">{meta.label}</span>
               </label>
             )
           })}
@@ -96,7 +101,7 @@ export function EventForm({ initial, submitLabel, allowPast, onSubmit, onCancel 
         </Field>
       </div>
 
-      <div className="grid gap-6 border-t border-line pt-8 sm:grid-cols-3">
+      <div className="grid gap-6 border-t-2 border-ink pt-8 sm:grid-cols-3">
         <Field label="Currency">
           {(p) => (
             <Select {...p} value={values.currency} onChange={(e) => set('currency', e.target.value as Currency)}>
@@ -117,7 +122,7 @@ export function EventForm({ initial, submitLabel, allowPast, onSubmit, onCancel 
       </div>
 
       <div className="flex flex-wrap gap-3">
-        <Button type="submit" variant="clay" size="lg">
+        <Button type="submit" variant="danfo" size="lg">
           {submitLabel}
         </Button>
         {onCancel && (

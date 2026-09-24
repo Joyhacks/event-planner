@@ -1,18 +1,19 @@
 import { Link } from 'react-router-dom'
 
+/** Wordmark: signboard lettering on a yellow plate with two danfo stripes. */
 export function Logo({ to = '/', inverted = false }: { to?: string; inverted?: boolean }) {
   return (
-    <Link to={to} className="group inline-flex items-center gap-2" aria-label="Ariya home">
-      <svg viewBox="0 0 32 32" className="h-7 w-7 shrink-0" aria-hidden="true">
-        <rect width="32" height="32" rx="2" fill={inverted ? '#f4eee3' : '#1f2a5a'} />
-        <g fill="none" stroke="#d99a2b" strokeWidth="1.8">
-          <circle cx="16" cy="16" r="10" />
-          <circle cx="16" cy="16" r="5.5" />
-        </g>
-        <circle cx="16" cy="16" r="2.2" fill={inverted ? '#1f2a5a' : '#f4eee3'} />
-      </svg>
-      <span className={`font-serif text-[1.7rem] leading-none italic ${inverted ? 'text-paper' : 'text-ink'}`}>
-        ariya
+    <Link to={to} className="group inline-flex items-center" aria-label="Ariya home">
+      <span
+        className={`relative inline-flex h-9 items-center overflow-hidden rounded-sm border-2 px-2.5 pb-1.5 ${
+          inverted ? 'border-danfo bg-ink text-danfo' : 'border-ink bg-danfo text-ink'
+        }`}
+      >
+        <span className="font-sign text-[1.15rem] leading-none">ARIYA</span>
+        <span
+          aria-hidden="true"
+          className={`absolute inset-x-0 bottom-[3px] h-[3px] ${inverted ? 'bg-danfo' : 'bg-ink'}`}
+        />
       </span>
     </Link>
   )

@@ -23,7 +23,7 @@ export default function EventVendors() {
     <div>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="font-serif text-3xl">Your vendors</h2>
+          <h2 className="font-display text-2xl sm:text-[1.7rem]">Your vendors</h2>
           <p className="mt-1 text-ink-soft">Move each one along as you confirm, pay the deposit and settle up.</p>
         </div>
         <Link to={`/app/vendors?event=${event.id}`} className={buttonClass('outline', 'sm')}>
@@ -32,7 +32,7 @@ export default function EventVendors() {
       </div>
 
       {booked.length === 0 ? (
-        <p className="mt-10 border-t border-line pt-10 text-ink-soft">
+        <p className="mt-8 rounded-lg border-2 border-dashed border-ink px-6 py-10 font-medium text-ink-soft">
           Nobody booked yet. Venue and caterer get taken first, especially for December dates.
         </p>
       ) : (

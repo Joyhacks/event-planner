@@ -29,7 +29,7 @@ export function ConfirmButton({
   return (
     <Button
       {...rest}
-      className={`${armed ? '!bg-clay !text-card' : ''} ${className}`}
+      className={`${armed ? '!bg-red !text-white' : ''} ${className}`}
       onClick={() => (armed ? onConfirm() : setArmed(true))}
       onBlur={() => setArmed(false)}
     >
@@ -52,12 +52,12 @@ export function Field({ label, hint, error, children, className = '' }: FieldPro
   const describedBy = error ? `${id}-error` : hint ? `${id}-hint` : undefined
   return (
     <div className={`flex flex-col gap-1.5 ${className}`}>
-      <label htmlFor={id} className="text-[0.8rem] font-medium tracking-wide text-ink-soft uppercase">
+      <label htmlFor={id} className="text-[0.72rem] font-bold tracking-[0.12em] text-ink uppercase">
         {label}
       </label>
       {children({ id, 'aria-describedby': describedBy, 'aria-invalid': error ? true : undefined })}
       {error ? (
-        <p id={`${id}-error`} className="text-sm text-clay" role="alert">
+        <p id={`${id}-error`} className="text-sm font-medium text-red" role="alert">
           {error}
         </p>
       ) : hint ? (
@@ -77,39 +77,40 @@ export function Select(props: SelectHTMLAttributes<HTMLSelectElement>) {
   return (
     <select
       {...props}
-      className={`${fieldClass} appearance-none bg-[url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2012%208'%3E%3Cpath%20d='M1%201l5%205%205-5'%20fill='none'%20stroke='%231b1612'%20stroke-width='1.5'/%3E%3C/svg%3E")] bg-[length:10px] bg-[right_0.9rem_center] bg-no-repeat pr-9 ${props.className ?? ''}`}
+      className={`${fieldClass} appearance-none bg-[url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2012%208'%3E%3Cpath%20d='M1%201l5%205%205-5'%20fill='none'%20stroke='%230e0e0e'%20stroke-width='2'/%3E%3C/svg%3E")] bg-[length:10px] bg-[right_0.9rem_center] bg-no-repeat pr-9 ${props.className ?? ''}`}
     />
   )
 }
 
 export function Eyebrow({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return (
-    <p className={`text-[0.72rem] font-semibold tracking-[0.18em] text-ink-soft uppercase ${className}`}>{children}</p>
-  )
+  return <p className={`text-[0.72rem] font-bold tracking-[0.16em] text-ink-soft uppercase ${className}`}>{children}</p>
 }
 
-type Tone = 'neutral' | 'palm' | 'clay' | 'ochre' | 'indigo'
+type Tone = 'neutral' | 'green' | 'red' | 'danfo' | 'blue' | 'pink'
 
 const TONES: Record<Tone, string> = {
-  neutral: 'bg-paper-2 text-ink-soft',
-  palm: 'bg-palm-soft text-palm',
-  clay: 'bg-clay-soft text-clay-deep',
-  ochre: 'bg-ochre-soft text-ink',
-  indigo: 'bg-indigo-soft text-indigo',
+  neutral: 'bg-paper-2 text-ink-soft border-line-strong',
+  green: 'bg-green-soft text-green border-green',
+  red: 'bg-red-soft text-red border-red',
+  danfo: 'bg-danfo-soft text-ink border-danfo-deep',
+  blue: 'bg-blue-soft text-blue border-blue',
+  pink: 'bg-pink-soft text-ink border-pink',
 }
 
 export function Pill({ tone = 'neutral', children }: { tone?: Tone; children: ReactNode }) {
   return (
-    <span className={`inline-flex h-6 items-center rounded-full px-2.5 text-xs font-medium ${TONES[tone]}`}>
+    <span className={`inline-flex h-6 items-center rounded-full border-[1.5px] px-2.5 text-[0.72rem] font-bold ${TONES[tone]}`}>
       {children}
     </span>
   )
 }
 
-/** Thin two-colour bar. `value` and `max` are raw numbers. */
-export function Meter({ value, max, tone = 'indigo', label }: { value: number; max: number; tone?: 'indigo' | 'clay' | 'palm' | 'ochre'; label: string }) {
+type MeterTone = 'ink' | 'green' | 'danfo' | 'red' | 'pink' | 'blue'
+
+/** Chunky progress bar. `value` and `max` are raw numbers. */
+export function Meter({ value, max, tone = 'ink', label }: { value: number; max: number; tone?: MeterTone; label: string }) {
   const pct = max > 0 ? Math.min(100, Math.round((value / max) * 100)) : 0
-  const fill = { indigo: 'bg-indigo', clay: 'bg-clay', palm: 'bg-palm', ochre: 'bg-ochre' }[tone]
+  const fill = { ink: 'bg-ink', green: 'bg-green', danfo: 'bg-danfo', red: 'bg-red', pink: 'bg-pink', blue: 'bg-blue' }[tone]
   return (
     <div
       role="meter"
@@ -117,9 +118,34 @@ export function Meter({ value, max, tone = 'indigo', label }: { value: number; m
       aria-valuemin={0}
       aria-valuemax={100}
       aria-valuenow={pct}
-      className="h-1.5 w-full overflow-hidden rounded-full bg-paper-2"
+      className="h-3 w-full overflow-hidden rounded-full border-2 border-ink bg-white"
     >
-      <div className={`h-full ${fill}`} style={{ width: `${pct}%` }} />
+      <div className={`h-full ${fill} ${pct > 0 && pct < 100 ? 'border-r-2 border-ink' : ''}`} style={{ width: `${pct}%` }} />
     </div>
+  )
+}
+
+/** Rotated signboard sticker. */
+export function Sticker({
+  children,
+  className = '',
+  tone = 'pink',
+  shape = 'pill',
+}: {
+  children: ReactNode
+  className?: string
+  tone?: 'pink' | 'danfo' | 'white' | 'green' | 'ink'
+  shape?: 'pill' | 'round'
+}) {
+  const colors = {
+    pink: 'bg-pink text-ink',
+    danfo: 'bg-danfo text-ink',
+    white: 'bg-white text-ink',
+    green: 'bg-green text-white',
+    ink: 'bg-ink text-danfo',
+  }[tone]
+  const box = shape === 'round' ? 'grid aspect-square place-items-center rounded-full p-3 text-center' : 'inline-flex items-center rounded-full px-4 py-2'
+  return (
+    <span className={`font-sign border-2 border-ink leading-none shadow-hard-sm ${colors} ${box} ${className}`}>{children}</span>
   )
 }

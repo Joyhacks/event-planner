@@ -15,7 +15,7 @@ export default function EventLayout() {
   if (!event) {
     return (
       <div className="mx-auto max-w-xl px-5 py-24 sm:px-8">
-        <p className="font-serif text-6xl text-clay italic">Hmm.</p>
+        <p className="font-sign text-6xl text-pink">Hmm.</p>
         <h1 className="mt-3 text-2xl font-semibold">We can’t find that event.</h1>
         <p className="mt-2 text-ink-soft">
           It may have been deleted, or it was planned on another device. Events are saved in this browser only.
@@ -40,45 +40,52 @@ export default function EventLayout() {
 
   return (
     <div>
-      <header className="relative overflow-hidden" style={{ background: meta.bg, color: meta.fg }}>
-        <Motif kind={meta.motif} color={meta.accent} opacity={0.35} />
-        <div aria-hidden="true" className="absolute inset-0" style={{ background: `linear-gradient(100deg, ${meta.bg} 30%, transparent 90%)` }} />
-        <div className="relative mx-auto max-w-[1180px] px-5 pt-6 pb-8 sm:px-8 lg:pt-10">
-          <Link to="/app" className="inline-flex items-center gap-1.5 text-sm opacity-80 hover:opacity-100">
-            <ArrowLeft size={16} aria-hidden="true" /> All events
+      <header className="relative overflow-hidden border-b-2 border-ink" style={{ background: meta.bg, color: meta.fg }}>
+        <Motif kind={meta.motif} color={meta.accent} opacity={0.12} />
+        <div className="relative mx-auto max-w-[1180px] px-5 pt-6 pb-9 sm:px-8 lg:pt-9">
+          <Link to="/app" className="inline-flex items-center gap-1.5 text-sm font-bold hover:underline">
+            <ArrowLeft size={16} strokeWidth={2.5} aria-hidden="true" /> All events
           </Link>
           <div className="mt-8 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div className="min-w-0">
-              <p className="text-xs font-semibold tracking-[0.16em] uppercase opacity-80">
-                {meta.label}
-                {event.isSample && <span className="ml-3 rounded-full border border-current px-2 py-0.5 tracking-normal normal-case">Sample</span>}
+              <p className="flex flex-wrap items-center gap-2">
+                <span className="rounded-full border-2 border-ink bg-white px-3 py-0.5 text-[0.7rem] font-extrabold tracking-[0.12em] text-ink uppercase">
+                  {meta.label}
+                </span>
+                {event.isSample && (
+                  <span className="rounded-full border-2 border-ink bg-ink px-3 py-0.5 text-[0.7rem] font-extrabold tracking-[0.12em] text-danfo uppercase">
+                    Sample
+                  </span>
+                )}
               </p>
-              <h1 className="mt-3 font-serif text-5xl leading-[0.95] break-words sm:text-7xl">{event.title}</h1>
-              <p className="mt-3 opacity-85">
+              <h1 className="font-display mt-4 text-[2.6rem] leading-[0.92] break-words sm:text-6xl">{event.title}</h1>
+              <p className="mt-3 font-semibold">
                 {formatDate(event.date)} · {formatTime(event.startTime)} · {event.venue ? `${event.venue}, ` : ''}
                 {event.city}
               </p>
             </div>
-            <p className="shrink-0 font-serif text-3xl italic md:text-right">{countdownLabel(days)}</p>
+            <p className="font-sign shrink-0 self-start rounded-full border-2 border-ink bg-white px-5 py-3 text-lg text-ink shadow-hard-sm md:self-auto md:rotate-3">
+              {countdownLabel(days)}
+            </p>
           </div>
         </div>
       </header>
 
-      <nav aria-label="Event sections" className="sticky top-16 z-20 border-b border-line bg-paper/95 backdrop-blur lg:top-0">
-        <div className="mx-auto flex max-w-[1180px] gap-1 overflow-x-auto px-3 [scrollbar-width:none] sm:px-6">
+      <nav aria-label="Event sections" className="sticky top-16 z-20 border-b-2 border-ink bg-paper lg:top-0">
+        <div className="mx-auto flex max-w-[1180px] gap-1 overflow-x-auto px-3 py-2.5 [scrollbar-width:none] sm:px-6">
           {tabs.map((t) => (
             <NavLink
               key={t.label}
               to={t.to}
               end
               className={({ isActive }) =>
-                `relative flex h-13 shrink-0 items-center gap-2 px-3 text-sm whitespace-nowrap transition-colors after:absolute after:inset-x-3 after:bottom-0 after:h-0.5 ${
-                  isActive ? 'font-semibold text-ink after:bg-clay' : 'text-ink-soft hover:text-ink'
+                `flex h-10 shrink-0 items-center gap-2 rounded-full px-4 text-sm font-bold whitespace-nowrap transition-colors ${
+                  isActive ? 'bg-ink text-danfo' : 'text-ink-soft hover:bg-paper-2 hover:text-ink'
                 }`
               }
             >
               {t.label}
-              {t.count ? <span className="tabular rounded-full bg-paper-2 px-1.5 text-xs text-ink-soft">{t.count}</span> : null}
+              {t.count ? <span className="tabular rounded-full bg-danfo px-1.5 text-xs text-ink">{t.count}</span> : null}
             </NavLink>
           ))}
         </div>

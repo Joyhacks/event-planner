@@ -1,12 +1,15 @@
-# Ariya design system
+# Ariya design system: "Danfo Signboard"
 
-Ariya plans African celebrations, so it should look like one: textile, paper and
-ink, not a SaaS dashboard. Tokens live in `src/index.css`; this file is the intent.
+Ariya plans African celebrations, so it should look like Lagos, not like a
+template. The references are the yellow danfo bus with its two black stripes,
+hand-painted signboards and bus slogans, owambe fabric and Afrobeats poster
+graphics. Tokens live in `src/index.css`; this file explains the intent.
 
 ## Mood
 
-Editorial print meets Yoruba textile. Think an owambe invitation card, a folded
-aso-ebi bolt, and a well-set magazine page. Calm surfaces, loud moments.
+Loud outside, calm inside. The marketing pages shout: yellow, huge type,
+stickers, slogans. The planner itself is a clean white workspace that uses the
+same borders, shadows and yellow accents, so the two feel like one product.
 
 ## Colour
 
@@ -15,55 +18,52 @@ token, it does not exist.
 
 | Token | Hex | Use |
 |---|---|---|
-| `paper` / `paper-2` / `card` | #f4eee3 / #ebe2d2 / #fbf8f2 | Page, sunken panels, raised surfaces |
-| `ink` / `ink-soft` / `ink-faint` | #1b1612 / #564c42 / #8a7d6e | Text, secondary text, labels |
-| `line` / `line-strong` | #d8ccb8 / #b7a78e | Rules and input borders |
-| `indigo` | #1f2a5a | Adire indigo. Primary brand surface |
-| `clay` | #b0412a | Camwood. Primary action, emphasis in headlines |
-| `ochre` | #d99a2b | Accent and decoration. Never body text on paper |
-| `palm` | #2f5a3b | Success: coming, paid, collected |
+| `danfo` | #ffc700 | Brand. Hero, active nav, primary highlights |
+| `ink` | #0e0e0e | Text, borders, shadows, primary buttons (yellow text on black) |
+| `paper` / `card` | #f4f3ee / #ffffff | App background and surfaces |
+| `pink` | #f0287a | Gele pink. Stickers, owambe, one accent per screen |
+| `green` | #008751 | Naija green. Success: coming, paid, collected |
+| `blue` | #2447d6 | Lagoon blue. Focus rings, info, corporate events |
+| `red` | #d9331a | Errors and overspend only |
 
-Every event type owns a colour and a motif (`src/data/catalog.ts`), so a
-ticket is recognisable before it is read.
+Pink or yellow text on yellow fails contrast, so it is never used. Emphasis
+on yellow is black-box-yellow-text instead.
 
 ## Type
 
-- **Instrument Serif** for display, numbers that matter and one italic phrase per headline.
-- **Bricolage Grotesque** for everything else.
-- Two families, no more. Both are self-hosted through Fontsource.
-- Eyebrows: 0.72rem, 600, 0.18em tracking, uppercase.
-- Money and counts always use the `tabular` utility.
+- **Archivo** (variable width), set extra-wide (`font-display`: 125% width, 850 weight) for headlines. Normal width for body and UI.
+- **Bungee** (`font-sign`) is signboard lettering. Use it for numbers that matter (countdowns, money, stats), slogans and stickers. Never for paragraphs.
+- Both are self-hosted through Fontsource.
+- Labels: 0.68 to 0.72rem, bold, 0.12em tracking, uppercase.
+- Emphasised headline phrase: `hl` utility (yellow marker box).
 
-## Shape
+## Shape and depth
 
-- Radius vocabulary: `rounded-xs` (2px) for inputs and panels, `rounded-sm` (4px) for tickets, `rounded-full` for buttons, chips and pills. Nothing in between.
-- Surfaces are separated by 1px rules and colour, not stacked shadows.
-- One shadow each: `shadow-lift` for small floating notes, `drop-stamp` for tickets.
-
-## Motifs
-
-`<Motif>` draws SVG patterns inspired by adire and kente:
-`oniko` (tie-dye rings), `eleko` (starch-resist lines and dots), `kente`
-(woven blocks), `orbit` (calabash rings). Use them on covers and feature
-blocks, always with a gradient scrim under any text that sits on top.
+- Borders are 2px ink. Hairlines are only for inside tables.
+- Radius vocabulary: `rounded-md` (10px) for controls, `rounded-lg` (16px) for cards, `rounded-full` for pills, stickers and tabs.
+- Depth is a hard offset shadow (`shadow-hard-sm`, `shadow-hard`, `shadow-hard-lg`), never blur. Pressable things lift on hover and press flat on click.
 
 ## Signature pieces
 
-- **The ticket** (`EventTicket`): patterned cover, perforated tear line with notches, stub with the numbers.
-- **The countdown**: a very large serif numeral.
-- **The ledger**: rows split by hairlines, not cards.
+- **Danfo stripes** (`danfo-stripes`): the two black bands, used to close yellow sections.
+- **Signboard** (`<Signboard>`): a painted plate with four screws.
+- **Sticker** (`<Sticker>`): rotated badge in Bungee.
+- **Gate-pass ticket** (`<EventTicket>`): patterned cover, perforation with notches, stats stub.
+- **Slogan marquee**: danfo slogans in Bungee on black.
+- **Textile motifs** (`<Motif>`): adire rings, eleko dots, kente blocks, calabash orbits, taxi checker. Keep them at low opacity (about 0.12) behind content.
+- **Grain** (`grain`): print texture on big yellow areas only.
 
 ## Never
 
-- Purple-to-blue gradients, glassmorphism, neon.
-- `rounded-2xl shadow-lg p-6` cards, cards inside cards.
-- Three-column icon feature grids.
-- Stock photos or AI-generated imagery. Use motifs and colour blocks.
+- Cream paper with a thin serif and terracotta (the 2025 "AI editorial" look).
+- Purple or blue gradients, glassmorphism, soft blurred shadows.
+- Inter, Instrument Serif, Fraunces, Space Grotesk.
+- Three-column icon feature grids, cards inside cards.
+- Stock photos or AI-generated imagery.
 - Fake testimonials or invented stats.
-- Fade or bounce animations on scroll. The marquee respects `prefers-reduced-motion`.
 
 ## Voice
 
-Warm, direct, a little Lagos. Light Pidgin and Yoruba where it lands naturally
-(“wahala”, “Ẹ káàárọ̀”), never as a gimmick. Error messages tell people what to
-do next.
+Warm, direct, a little Lagos. Light Pidgin and Yoruba where it fits naturally
+(“wahala”, “This party don change venue”, “Ẹ káàárọ̀”). Error messages tell
+people what to do next.

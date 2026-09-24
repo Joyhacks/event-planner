@@ -1,18 +1,19 @@
 import { Link } from 'react-router-dom'
-import { Motif } from '../components/Motif'
+import { Signboard } from '../components/Signboard'
 import { buttonClass } from '../components/styles'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
 
 export default function NotFound() {
   useDocumentTitle('Page not found')
   return (
-    <main className="relative grid min-h-screen place-items-center overflow-hidden bg-indigo px-6 text-paper">
-      <Motif kind="oniko" color="#d99a2b" opacity={0.25} />
-      <div className="relative max-w-lg text-center">
-        <p className="font-serif text-[9rem] leading-none italic text-ochre">404</p>
-        <h1 className="mt-2 text-2xl font-semibold">This party has moved venue.</h1>
-        <p className="mt-2 text-paper/75">The page you wanted is not here. Your events are safe.</p>
-        <Link to="/app" className={buttonClass('paper', 'md', 'mt-8')}>
+    <main className="grain grid min-h-screen place-items-center bg-danfo px-5">
+      <div className="max-w-lg text-center">
+        <Signboard tone="ink" className="mx-auto inline-block -rotate-2 px-10 py-6 shadow-hard-lg">
+          <p className="font-sign text-[6rem] leading-none sm:text-[8rem]">404</p>
+        </Signboard>
+        <h1 className="font-display mt-10 text-3xl sm:text-4xl">This party don change venue.</h1>
+        <p className="mt-3 font-medium">The page you wanted is not here. Your events are safe.</p>
+        <Link to="/app" className={buttonClass('ink', 'lg', 'mt-8')}>
           Go to my events
         </Link>
       </div>

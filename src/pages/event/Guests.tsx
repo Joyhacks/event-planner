@@ -16,7 +16,7 @@ const FILTERS: { value: Rsvp | 'all'; label: string }[] = [
   { value: 'no', label: 'Not coming' },
 ]
 
-const RSVP_TONE = { yes: 'palm', no: 'clay', maybe: 'ochre', pending: 'neutral' } as const
+const RSVP_TONE = { yes: 'green', no: 'red', maybe: 'danfo', pending: 'neutral' } as const
 
 export default function Guests() {
   const { event } = useEventContext()
@@ -63,20 +63,20 @@ export default function Guests() {
   return (
     <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
       <section aria-labelledby="add-guest" className="order-2 lg:order-none lg:col-span-4">
-        <dl className="grid grid-cols-3 border-y border-line py-5 text-center">
+        <dl className="grid grid-cols-3 divide-x-2 divide-ink rounded-lg border-2 border-ink bg-card py-5 text-center shadow-hard">
           {[
-            ['Coming', stats.coming, 'text-palm'],
+            ['Coming', stats.coming, 'text-green'],
             ['Awaiting', stats.pending, 'text-ink'],
-            ['Declined', stats.declined, 'text-clay'],
+            ['Declined', stats.declined, 'text-red'],
           ].map(([label, n, tone]) => (
             <div key={label} className="flex flex-col-reverse">
-              <dd className={`tabular font-serif text-4xl ${tone}`}>{n}</dd>
-              <dt className="text-xs tracking-wider text-ink-faint uppercase">{label}</dt>
+              <dd className={`tabular font-sign text-4xl ${tone}`}>{n}</dd>
+              <dt className="text-[0.68rem] font-bold tracking-[0.12em] text-ink-faint uppercase">{label}</dt>
             </div>
           ))}
         </dl>
 
-        <h2 id="add-guest" className="mt-10 font-serif text-3xl">Add a guest</h2>
+        <h2 id="add-guest" className="mt-10 font-display text-2xl sm:text-[1.7rem]">Add a guest</h2>
         <form onSubmit={submit} noValidate className="mt-5 flex flex-col gap-4">
           <Field label="Name" error={error}>
             {(p) => <Input {...p} value={name} onChange={(e) => setName(e.target.value)} placeholder="Chief & Mrs Adewale" autoComplete="off" />}
@@ -108,7 +108,7 @@ export default function Guests() {
 
       <section aria-labelledby="guest-list" className="min-w-0 lg:col-span-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <h2 id="guest-list" className="font-serif text-3xl">
+          <h2 id="guest-list" className="font-display text-2xl sm:text-[1.7rem]">
             Guest list <span className="tabular text-ink-faint">({stats.heads} seats)</span>
           </h2>
           <Button variant="outline" size="sm" onClick={exportCsv} disabled={!event.guests.length}>
@@ -124,8 +124,8 @@ export default function Guests() {
                 type="button"
                 aria-pressed={filter === f.value}
                 onClick={() => setFilter(f.value)}
-                className={`h-9 shrink-0 rounded-full px-3.5 text-sm transition-colors ${
-                  filter === f.value ? 'bg-ink text-paper' : 'text-ink-soft hover:bg-paper-2'
+                className={`h-9 shrink-0 rounded-full px-3.5 text-sm font-bold transition-colors ${
+                  filter === f.value ? 'bg-ink text-danfo' : 'text-ink-soft hover:bg-paper-2'
                 }`}
               >
                 {f.label}
@@ -140,15 +140,15 @@ export default function Guests() {
         </div>
 
         {visible.length === 0 ? (
-          <p className="mt-10 border-t border-line pt-10 text-center text-ink-soft">
+          <p className="mt-6 rounded-lg border-2 border-dashed border-ink px-6 py-10 text-center font-medium text-ink-soft">
             {event.guests.length === 0 ? 'No guests yet. Start with the people you cannot forget.' : 'Nobody matches that filter.'}
           </p>
         ) : (
-          <ul className="mt-6 border-t border-line">
+          <ul className="mt-6 overflow-hidden rounded-lg border-2 border-ink bg-card divide-y-2 divide-ink">
             {visible.map((g) => (
-              <li key={g.id} className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-2 border-b border-line py-4 sm:grid-cols-[1fr_9.5rem_auto]">
+              <li key={g.id} className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-2 px-4 py-4 sm:grid-cols-[1fr_9.5rem_auto]">
                 <div className="min-w-0">
-                  <p className="truncate font-medium">
+                  <p className="truncate font-bold">
                     {g.name}
                     {g.plusOnes > 0 && <span className="text-ink-faint"> +{g.plusOnes}</span>}
                   </p>
@@ -173,7 +173,7 @@ export default function Guests() {
                 <button
                   type="button"
                   onClick={() => removeGuest(event.id, g.id)}
-                  className="col-start-2 row-start-1 grid h-10 w-10 place-items-center rounded-full text-ink-faint hover:bg-paper-2 hover:text-clay sm:col-start-auto sm:row-start-auto"
+                  className="col-start-2 row-start-1 grid h-10 w-10 place-items-center rounded-full text-ink-faint hover:bg-paper-2 hover:text-red sm:col-start-auto sm:row-start-auto"
                   aria-label={`Remove ${g.name}`}
                 >
                   <X size={17} aria-hidden="true" />

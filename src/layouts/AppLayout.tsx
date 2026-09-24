@@ -2,7 +2,7 @@ import { CalendarHeart, Plus, Store } from 'lucide-react'
 import { useEffect } from 'react'
 import { NavLink, Outlet, ScrollRestoration } from 'react-router-dom'
 import { Logo } from '../components/Logo'
-import { Motif } from '../components/Motif'
+import { Signboard } from '../components/Signboard'
 import { usePlanner } from '../store/planner'
 
 const NAV = [
@@ -16,43 +16,43 @@ export function AppLayout() {
   useEffect(() => seedIfFirstVisit(), [seedIfFirstVisit])
 
   return (
-    <div className="min-h-screen lg:grid lg:grid-cols-[248px_1fr]">
-      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-paper">
+    <div className="min-h-screen lg:grid lg:grid-cols-[252px_1fr]">
+      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-ink focus:px-4 focus:py-2 focus:text-danfo">
         Skip to content
       </a>
 
       {/* Desktop rail */}
-      <aside className="sticky top-0 hidden h-screen flex-col border-r border-line bg-paper lg:flex">
+      <aside className="sticky top-0 hidden h-screen flex-col bg-ink text-white lg:flex">
         <div className="px-6 pt-7 pb-10">
           <Logo to="/app" />
         </div>
-        <nav aria-label="Planner" className="flex flex-col gap-1 px-3">
+        <nav aria-label="Planner" className="flex flex-col gap-1.5 px-4">
           {NAV.map(({ to, label, icon: Icon, end }) => (
             <NavLink
               key={to}
               to={to}
               end={end}
               className={({ isActive }) =>
-                `flex h-11 items-center gap-3 rounded-full px-4 text-[0.95rem] transition-colors ${
-                  isActive ? 'bg-ink text-paper' : 'text-ink-soft hover:bg-paper-2 hover:text-ink'
+                `flex h-11 items-center gap-3 rounded-md px-3.5 text-[0.95rem] font-semibold transition-colors ${
+                  isActive ? 'bg-danfo text-ink' : 'text-white/70 hover:bg-white/10 hover:text-white'
                 }`
               }
             >
-              <Icon size={18} strokeWidth={1.75} aria-hidden="true" />
+              <Icon size={18} strokeWidth={2.25} aria-hidden="true" />
               {label}
             </NavLink>
           ))}
         </nav>
-        <div className="relative mx-3 mt-auto mb-4 overflow-hidden rounded-sm bg-indigo p-5 text-paper">
-          <Motif kind="eleko" color="#d99a2b" opacity={0.35} />
-          <p className="relative font-serif text-xl leading-snug italic">“Party no dey sweet if planning no set.”</p>
-          <p className="relative mt-2 text-xs text-paper/70">Every Lagos aunty, ever</p>
+        <div className="mt-auto px-4 pb-5">
+          <Signboard className="-rotate-2">
+            <p className="font-sign text-[1.05rem] leading-[1.1]">Party no dey sweet if planning no set</p>
+          </Signboard>
         </div>
       </aside>
 
       {/* Mobile top bar */}
-      <header className="sticky top-0 z-30 flex h-16 items-center border-b border-line bg-paper/90 px-5 backdrop-blur lg:hidden">
-        <Logo to="/app" />
+      <header className="sticky top-0 z-30 flex h-16 items-center border-b-2 border-ink bg-danfo px-5 lg:hidden">
+        <Logo to="/app" inverted />
       </header>
 
       <main id="main" className="min-w-0 pb-28 lg:pb-16">
@@ -62,7 +62,7 @@ export function AppLayout() {
       {/* Mobile tab bar */}
       <nav
         aria-label="Planner"
-        className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-3 border-t border-line bg-card/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
+        className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-3 border-t-2 border-ink bg-ink pb-[env(safe-area-inset-bottom)] lg:hidden"
       >
         {NAV.map(({ to, label, icon: Icon, end }) => (
           <NavLink
@@ -70,12 +70,10 @@ export function AppLayout() {
             to={to}
             end={end}
             className={({ isActive }) =>
-              `flex h-16 flex-col items-center justify-center gap-1 text-[0.72rem] font-medium ${
-                isActive ? 'text-clay' : 'text-ink-soft'
-              }`
+              `flex h-16 flex-col items-center justify-center gap-1 text-[0.72rem] font-bold ${isActive ? 'text-danfo' : 'text-white/60'}`
             }
           >
-            <Icon size={20} strokeWidth={1.75} aria-hidden="true" />
+            <Icon size={20} strokeWidth={2.25} aria-hidden="true" />
             {label}
           </NavLink>
         ))}

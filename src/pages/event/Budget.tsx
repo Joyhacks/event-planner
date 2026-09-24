@@ -41,26 +41,26 @@ export default function Budget() {
 
   return (
     <div className="flex flex-col gap-14">
-      <section aria-label="Budget summary" className="grid gap-8 border-b border-line pb-10 md:grid-cols-[1.3fr_1fr_1fr_1fr]">
+      <section aria-label="Budget summary" className="grid gap-8 rounded-lg border-2 border-ink bg-card p-6 shadow-hard sm:p-8 md:grid-cols-[1.3fr_1fr_1fr_1fr]">
         <div>
-          <p className="text-xs tracking-wider text-ink-faint uppercase">Total budget</p>
-          <div className="mt-1 max-w-[16rem] font-serif text-4xl [&_input]:h-auto [&_input]:px-0 [&_input]:text-left [&_input]:font-serif [&_input]:text-4xl">
+          <p className="text-[0.68rem] font-bold tracking-[0.12em] text-ink-faint uppercase">Total budget</p>
+          <div className="mt-1 max-w-[16rem] [&_input]:h-auto [&_input]:px-0 [&_input]:py-1 [&_input]:text-left [&_input]:text-3xl [&_input]:[font-family:var(--font-sign)]">
             <AmountInput label="Total budget" value={event.budget} onCommit={(n) => updateEvent(event.id, { budget: n })} />
           </div>
           <p className="mt-1 text-sm text-ink-soft">{event.currency} · tap to change</p>
         </div>
         {[
-          ['Planned', s.planned, s.overBudget ? 'text-clay' : ''],
-          ['Paid', s.paid, 'text-palm'],
+          ['Planned', s.planned, s.overBudget ? 'text-red' : ''],
+          ['Paid', s.paid, 'text-green'],
           ['Still to pay', s.outstanding, ''],
         ].map(([l, n, tone]) => (
           <div key={l as string}>
-            <p className="text-xs tracking-wider text-ink-faint uppercase">{l}</p>
-            <p className={`tabular mt-1 font-serif text-4xl ${tone}`}>{money(n as number)}</p>
+            <p className="text-[0.68rem] font-bold tracking-[0.12em] text-ink-faint uppercase">{l}</p>
+            <p className={`tabular mt-1 font-sign text-[1.35rem] sm:text-2xl xl:text-[2rem] ${tone}`}>{money(n as number)}</p>
           </div>
         ))}
         {s.overBudget && (
-          <p role="status" className="rounded-xs bg-clay-soft px-4 py-3 text-sm text-clay-deep md:col-span-4">
+          <p role="status" className="rounded-xs bg-red-soft px-4 py-3 text-sm text-red md:col-span-4">
             Planned spend is {money(-s.unallocated)} above your budget. Trim a line, or raise the ceiling if the family has agreed.
           </p>
         )}
@@ -68,31 +68,31 @@ export default function Budget() {
 
       <div className="grid grid-cols-1 gap-14 lg:grid-cols-12">
         <section aria-labelledby="lines" className="min-w-0 lg:col-span-8">
-          <h2 id="lines" className="font-serif text-3xl">Line items</h2>
+          <h2 id="lines" className="font-display text-2xl sm:text-[1.7rem]">Line items</h2>
           {event.budgetItems.length === 0 ? (
             <p className="mt-6 text-ink-soft">No costs yet. Add the venue and the caterer first; they are usually the biggest.</p>
           ) : (
             <div className="mt-5">
-              <div className="hidden grid-cols-[1fr_8.5rem_8.5rem_2.5rem] gap-2 border-b border-line-strong pb-3 text-[0.7rem] tracking-wider text-ink-faint uppercase sm:grid" aria-hidden="true">
+              <div className="hidden grid-cols-[1fr_8.5rem_8.5rem_2.5rem] gap-2 px-4 pb-2 text-[0.68rem] font-bold tracking-[0.12em] text-ink-faint uppercase sm:grid" aria-hidden="true">
                 <span>Item</span>
                 <span className="pr-3 text-right">Planned</span>
                 <span className="pr-3 text-right">Paid</span>
                 <span />
               </div>
-              <ul>
+              <ul className="overflow-hidden rounded-lg border-2 border-ink bg-card divide-y-2 divide-ink">
                 {event.budgetItems.map((i) => (
                   <li
                     key={i.id}
-                    className="grid grid-cols-2 items-center gap-x-2 border-b border-line py-3 sm:grid-cols-[1fr_8.5rem_8.5rem_2.5rem] sm:py-2"
+                    className="grid grid-cols-2 items-center gap-x-2 px-4 py-3 sm:grid-cols-[1fr_8.5rem_8.5rem_2.5rem] sm:py-2"
                   >
                     <div className="min-w-0">
-                      <p className="truncate font-medium">{i.label}</p>
+                      <p className="truncate font-bold">{i.label}</p>
                       <p className="text-sm text-ink-faint">{BUDGET_LABEL[i.category]}</p>
                     </div>
                     <button
                       type="button"
                       onClick={() => removeBudgetItem(event.id, i.id)}
-                      className="grid h-10 w-10 place-items-center justify-self-end rounded-full text-ink-faint hover:bg-paper-2 hover:text-clay sm:order-last"
+                      className="grid h-10 w-10 place-items-center justify-self-end rounded-full text-ink-faint hover:bg-paper-2 hover:text-red sm:order-last"
                       aria-label={`Remove ${i.label}`}
                     >
                       <X size={16} aria-hidden="true" />
@@ -111,7 +111,7 @@ export default function Budget() {
             </div>
           )}
 
-          <form onSubmit={submit} noValidate className="mt-10 grid gap-4 border-t border-line pt-8 sm:grid-cols-[1.4fr_1fr_1fr_auto] sm:items-start">
+          <form onSubmit={submit} noValidate className="mt-8 grid gap-4 rounded-lg border-2 border-ink bg-danfo-soft p-5 sm:grid-cols-[1.4fr_1fr_1fr_auto] sm:items-start">
             <Field label="New item" error={errors.label}>
               {(p) => <Input {...p} value={label} onChange={(e) => setLabel(e.target.value)} placeholder="Small chops, 300 packs" />}
             </Field>
@@ -136,7 +136,7 @@ export default function Budget() {
         </section>
 
         <section aria-labelledby="split" className="lg:col-span-4">
-          <h2 id="split" className="font-serif text-3xl">Where it goes</h2>
+          <h2 id="split" className="font-display text-2xl sm:text-[1.7rem]">Where it goes</h2>
           <ul className="mt-5 flex flex-col gap-5">
             {byCategory.map((c) => (
               <li key={c.category}>
@@ -145,7 +145,7 @@ export default function Budget() {
                   <span className="tabular text-ink-soft">{money(c.planned)}</span>
                 </div>
                 <div className="mt-2">
-                  <Meter value={c.paid} max={c.planned} tone="indigo" label={`${BUDGET_LABEL[c.category]} paid`} />
+                  <Meter value={c.paid} max={c.planned} tone="blue" label={`${BUDGET_LABEL[c.category]} paid`} />
                 </div>
                 <p className="tabular mt-1 text-xs text-ink-faint">
                   {s.planned ? Math.round((c.planned / s.planned) * 100) : 0}% of plan · {money(c.paid)} paid

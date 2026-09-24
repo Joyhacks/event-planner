@@ -14,7 +14,7 @@ export default function NewEvent() {
     <div className="mx-auto max-w-[1180px] px-5 pt-8 sm:px-8 lg:pt-12">
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
         <div className="lg:col-span-4">
-          <PageHeader eyebrow="New event" title={<>Let’s set the <em className="text-clay">date.</em></>} />
+          <PageHeader eyebrow="New event" title={<>Let’s set the <em className="hl">date.</em></>} />
           <p className="mt-6 max-w-xs text-ink-soft">
             Only the name, date and city are required. Budget and guest numbers can be rough; you will refine them as
             quotes come in.

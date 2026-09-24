@@ -46,12 +46,12 @@ export default function Vendors() {
 
   return (
     <div className="mx-auto max-w-[1180px] px-5 pt-8 sm:px-8 lg:pt-12">
-      <PageHeader eyebrow="Directory" title={<>Vendors who <em className="text-clay">show up.</em></>} />
+      <PageHeader eyebrow="Directory" title={<>Vendors who <em className="hl">show up.</em></>} />
       <p className="mt-4 max-w-2xl text-sm text-ink-soft">
         Demo listings for trying out the planner. Vendor sign-up and verified reviews are on the way.
       </p>
 
-      <div className="mt-10 flex flex-col gap-4 border-y border-line py-5">
+      <div className="mt-10 flex flex-col gap-4 rounded-lg border-2 border-ink bg-card p-4 shadow-hard">
         <div role="group" aria-label="Filter by category" className="flex gap-1 overflow-x-auto [scrollbar-width:none]">
           {[null, ...(Object.keys(VENDOR_CATEGORY_LABEL) as VendorCategory[])].map((c) => (
             <button
@@ -59,8 +59,8 @@ export default function Vendors() {
               type="button"
               aria-pressed={category === c}
               onClick={() => setParam('category', c)}
-              className={`h-9 shrink-0 rounded-full px-3.5 text-sm transition-colors ${
-                category === c ? 'bg-ink text-paper' : 'text-ink-soft hover:bg-paper-2'
+              className={`h-9 shrink-0 rounded-full px-3.5 text-sm font-bold transition-colors ${
+                category === c ? 'bg-ink text-danfo' : 'text-ink-soft hover:bg-paper-2'
               }`}
             >
               {c ? VENDOR_CATEGORY_LABEL[c] : 'All'}
@@ -107,7 +107,7 @@ export default function Vendors() {
               <VendorCard key={v.id} vendor={v}>
                 {target ? (
                   added ? (
-                    <p className="flex h-9 items-center gap-2 text-sm text-palm">
+                    <p className="flex h-9 items-center gap-2 text-sm text-green">
                       <Check size={16} aria-hidden="true" /> On {target.title}’s list
                     </p>
                   ) : (
