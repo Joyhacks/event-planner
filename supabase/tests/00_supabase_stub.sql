@@ -4,6 +4,11 @@ create role anon nologin;
 create role authenticated nologin;
 create role service_role nologin bypassrls;
 
+create schema extensions;
+create extension pgcrypto schema extensions;
+grant usage on schema extensions to anon, authenticated, service_role;
+create publication supabase_realtime;
+
 create schema auth;
 create table auth.users (
   id                  uuid primary key default gen_random_uuid(),
