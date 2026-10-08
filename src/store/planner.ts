@@ -1,16 +1,12 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { createSampleEvent } from '../data/sample'
-import type {
-  Asoebi,
-  AsoebiBuyer,
-  BudgetItem,
-  Guest,
-  PlannerEvent,
-  ScheduleItem,
-  VendorStatus,
-} from '../data/types'
+import type { Asoebi, AsoebiBuyer, BudgetItem, Guest, PlannerEvent, ScheduleItem, VendorStatus } from '../data/types'
 import { uid } from '../lib/id'
+import { safeStorage, useStorageStatus, preserveUnreadableStorage } from '../lib/storageStatus'
+import { changeCloudEvent, useCloudPlanner } from './cloudPlanner'
+import { useMemo } from 'react'
+import { parsePlannerEvent, restoredCopy } from '../lib/plannerBackup'
 
 export type NewEventInput = Omit<
   PlannerEvent,
@@ -25,6 +21,10 @@ interface PlannerState {
   createEvent: (input: NewEventInput) => string
   updateEvent: (id: string, patch: Partial<NewEventInput>) => void
   deleteEvent: (id: string) => void
+  restoreEvents: (events: PlannerEvent[]) => void
+  importGuests: (eventId: string, guests: Omit<Guest, 'id'>[]) => void
+  setCustomVendor: (eventId: string, vendor: import('../data/types').BookedVendor) => void
+  updateScheduleItem: (eventId: string, itemId: string, item: Omit<ScheduleItem, 'id'>) => void
 
   addGuest: (eventId: string, guest: Omit<Guest, 'id'>) => void
   updateGuest: (eventId: string, guestId: string, patch: Partial<Guest>) => void
@@ -52,15 +52,17 @@ type Patch = (event: PlannerEvent) => PlannerEvent
 export const usePlanner = create<PlannerState>()(
   persist(
     (set, get) => {
-      const patchEvent = (id: string, fn: Patch) =>
+      const patchEvent = (id: string, fn: Patch) => {
+        if (changeCloudEvent(id, fn)) return
         set((s) => ({ events: s.events.map((e) => (e.id === id ? fn(e) : e)) }))
+      }
 
       return {
         events: [],
         seeded: false,
 
         seedIfFirstVisit: () => {
-          if (get().seeded) return
+          if (get().seeded || useStorageStatus.getState().recovery) return
           set((s) => ({ seeded: true, events: s.events.length ? s.events : [createSampleEvent()] }))
         },
 
@@ -87,6 +89,23 @@ export const usePlanner = create<PlannerState>()(
 
         updateEvent: (id, patch) => patchEvent(id, (e) => ({ ...e, ...patch })),
         deleteEvent: (id) => set((s) => ({ events: s.events.filter((e) => e.id !== id) })),
+        restoreEvents: (events) => set((s) => ({ seeded: true, events: [...s.events, ...events.map(restoredCopy)] })),
+        importGuests: (eventId, guests) =>
+          patchEvent(eventId, (e) => ({ ...e, guests: [...e.guests, ...guests.map((g) => ({ ...g, id: uid() }))] })),
+        setCustomVendor: (eventId, vendor) =>
+          patchEvent(eventId, (e) => ({
+            ...e,
+            vendors: e.vendors.some((v) => v.vendorId === vendor.vendorId)
+              ? e.vendors.map((v) => (v.vendorId === vendor.vendorId ? vendor : v))
+              : [...e.vendors, vendor],
+          })),
+        updateScheduleItem: (eventId, itemId, item) =>
+          patchEvent(eventId, (e) => ({
+            ...e,
+            schedule: e.schedule
+              .map((s) => (s.id === itemId ? { ...item, id: itemId } : s))
+              .sort((a, b) => a.time.localeCompare(b.time)),
+          })),
 
         addGuest: (eventId, guest) =>
           patchEvent(eventId, (e) => ({ ...e, guests: [{ ...guest, id: uid() }, ...e.guests] })),
@@ -130,7 +149,16 @@ export const usePlanner = create<PlannerState>()(
           patchEvent(eventId, (e) => ({ ...e, schedule: e.schedule.filter((i) => i.id !== itemId) })),
 
         setAsoebi: (eventId, asoebi) =>
-          patchEvent(eventId, (e) => ({ ...e, asoebi: { ...asoebi, buyers: e.asoebi?.buyers ?? [] } })),
+          patchEvent(eventId, (e) => ({
+            ...e,
+            asoebi: {
+              ...asoebi,
+              buyers: (e.asoebi?.buyers ?? []).map((b) => ({
+                ...b,
+                amountPaid: b.amountPaid ?? (b.paid ? b.sets * e.asoebi!.pricePerSet : 0),
+              })),
+            },
+          })),
         clearAsoebi: (eventId) => patchEvent(eventId, (e) => ({ ...e, asoebi: null })),
         addBuyer: (eventId, buyer) =>
           patchEvent(eventId, (e) =>
@@ -157,12 +185,33 @@ export const usePlanner = create<PlannerState>()(
     {
       name: 'ariya-planner',
       version: 1,
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => safeStorage),
       partialize: (s) => ({ events: s.events, seeded: s.seeded }),
+      merge: (persisted, current) => {
+        try {
+          const saved = persisted as { events?: unknown[]; seeded?: boolean } | undefined
+          return { ...current, events: (saved?.events ?? []).map(parsePlannerEvent), seeded: Boolean(saved?.seeded) }
+        } catch {
+          preserveUnreadableStorage('ariya-planner')
+          // Do not seed over unreadable data.
+          return { ...current, seeded: true }
+        }
+      },
     },
   ),
 )
 
 export function useEvent(id: string | undefined): PlannerEvent | undefined {
-  return usePlanner((s) => s.events.find((e) => e.id === id))
+  const local = usePlanner((s) => s.events.find((e) => e.id === id))
+  const remote = useCloudPlanner((s) => (id ? s.records[id]?.event : undefined))
+  return remote ?? local
+}
+
+export function useAllEvents() {
+  const local = usePlanner((s) => s.events)
+  const records = useCloudPlanner((s) => s.records)
+  return useMemo(
+    () => [...local.filter((e) => !records[e.id]), ...Object.values(records).map((r) => r.event)],
+    [local, records],
+  )
 }

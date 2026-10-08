@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Navigate, useSearchParams } from 'react-router-dom'
+import { Link, Navigate, useSearchParams } from 'react-router-dom'
 import { BackendMissing } from '../../components/RequireAuth'
 import { Signboard } from '../../components/Signboard'
 import { Button, Field, Input } from '../../components/ui'
@@ -7,16 +7,13 @@ import { useAuth } from '../../lib/authContext'
 import { backendReady, errorMessage, supabase } from '../../lib/supabase'
 import { useDocumentTitle } from '../../lib/useDocumentTitle'
 
-/** Only same-site paths are allowed as a post-login destination. */
-function safeNext(next: string | null): string {
-  return next && next.startsWith('/') && !next.startsWith('//') ? next : '/account/tickets'
-}
+import { safeNext } from '../../lib/safeNext'
 
 export default function SignIn() {
   useDocumentTitle('Sign in')
   const [params] = useSearchParams()
   const next = safeNext(params.get('next'))
-  const { user } = useAuth()
+  const { user, error: authError } = useAuth()
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
   const [sent, setSent] = useState(false)
@@ -31,16 +28,21 @@ export default function SignIn() {
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim())) return setError('Enter a valid email address.')
     setBusy(true)
     setError('')
-    const { error: err } = await supabase.auth.signInWithOtp({
-      email: email.trim(),
-      options: {
-        emailRedirectTo: `${window.location.origin}${next}`,
-        data: name.trim() ? { full_name: name.trim() } : undefined,
-      },
-    })
-    setBusy(false)
-    if (err) return setError(await errorMessage(err))
-    setSent(true)
+    try {
+      const { error: err } = await supabase.auth.signInWithOtp({
+        email: email.trim(),
+        options: {
+          emailRedirectTo: `${window.location.origin}${next}`,
+          data: name.trim() ? { full_name: name.trim() } : undefined,
+        },
+      })
+      if (err) throw err
+      setSent(true)
+    } catch (e) {
+      setError(await errorMessage(e))
+    } finally {
+      setBusy(false)
+    }
   }
 
   return (
@@ -60,8 +62,8 @@ export default function SignIn() {
               <p className="font-sign text-2xl leading-tight">Check your email</p>
             </Signboard>
             <p className="mt-6 font-medium">
-              We sent a sign-in link to <strong>{email}</strong>. Open it on this phone or computer. It can take a minute;
-              check spam or promotions too.
+              We sent a sign-in link to <strong>{email}</strong>. Open it on this phone or computer. It can take a
+              minute; check spam or promotions too.
             </p>
             <Button variant="ghost" className="mt-4" onClick={() => setSent(false)}>
               Use a different email
@@ -69,18 +71,46 @@ export default function SignIn() {
           </div>
         ) : (
           <form onSubmit={submit} noValidate className="flex flex-col gap-5">
-            <Field label="Email" error={error}>
+            <Field label="Email" error={error || authError}>
               {(p) => (
-                <Input {...p} type="email" autoComplete="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
+                <Input
+                  {...p}
+                  type="email"
+                  maxLength={254}
+                  autoComplete="email"
+                  inputMode="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                />
               )}
             </Field>
-            <Field label="Your name" hint="Only needed the first time. It goes on your tickets.">
-              {(p) => <Input {...p} autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Bisi Adeyemi" />}
+            <Field label="Your name" hint="Used on your profile and by your planning committee.">
+              {(p) => (
+                <Input
+                  {...p}
+                  maxLength={120}
+                  autoComplete="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Bisi Adeyemi"
+                />
+              )}
             </Field>
             <Button type="submit" variant="danfo" size="lg" disabled={busy}>
               {busy ? 'Sending…' : 'Email me a sign-in link'}
             </Button>
-            <p className="text-sm text-ink-soft">By continuing you agree to our terms and privacy policy.</p>
+            <p className="text-sm text-ink-soft">
+              By continuing you agree to our{' '}
+              <Link className="underline" to="/legal/terms">
+                terms
+              </Link>{' '}
+              and{' '}
+              <Link className="underline" to="/legal/privacy">
+                privacy policy
+              </Link>
+              .
+            </p>
           </form>
         )}
       </div>

@@ -1,12 +1,17 @@
-// Legal copy. DRAFT: have a Nigerian lawyer review before launch and fill in
-// the company details marked with [brackets].
-
+// Operator details must be supplied and reviewed before public launch.
+export const legalConfigured = Boolean(
+  import.meta.env.VITE_COMPANY_NAME &&
+    import.meta.env.VITE_COMPANY_ADDRESS &&
+    import.meta.env.VITE_SUPPORT_EMAIL &&
+    import.meta.env.VITE_PRIVACY_EMAIL &&
+    import.meta.env.VITE_TERMS_REVIEWED === 'true',
+)
 export const COMPANY = {
-  name: '[Company name] Ltd',
-  rc: '[RC number]',
-  address: '[Registered address], Lagos, Nigeria',
-  email: '[support@yourdomain]',
-  dpo: '[privacy@yourdomain]',
+  name: import.meta.env.VITE_COMPANY_NAME || 'Ariya (operator details pending)',
+  rc: import.meta.env.VITE_COMPANY_RC || 'registration details pending',
+  address: import.meta.env.VITE_COMPANY_ADDRESS || 'address to be published before launch',
+  email: import.meta.env.VITE_SUPPORT_EMAIL || 'support contact to be published before launch',
+  dpo: import.meta.env.VITE_PRIVACY_EMAIL || 'privacy contact to be published before launch',
 }
 
 export interface LegalDoc {
@@ -18,13 +23,20 @@ export interface LegalDoc {
 export const LEGAL: Record<'terms' | 'refunds' | 'privacy', LegalDoc> = {
   terms: {
     title: 'Terms of use',
-    updated: '24 September 2026',
+    updated: '8 October 2026',
     sections: [
       {
         heading: 'Who we are',
         body: [
           `Ariya is operated by ${COMPANY.name} (${COMPANY.rc}), ${COMPANY.address}. By using Ariya you agree to these terms.`,
           'Ariya is a platform. Events, contests and aso-ebi are organised and sold by independent organisers (“sellers”). The organiser, not Ariya, is responsible for the event itself.',
+        ],
+      },
+      {
+        heading: 'The event planner',
+        body: [
+          'The planner helps you record event details, guest replies, budgets and payments. Recording a payment does not collect money or verify a bank transfer. Demo vendor listings are examples, not recommendations or bookings.',
+          'Keep backups of device events. Clearing browser storage removes those copies. Online saving requires an account; the event owner controls committee access. Do not add personal data you are not entitled to use.',
         ],
       },
       {
@@ -58,13 +70,15 @@ export const LEGAL: Record<'terms' | 'refunds' | 'privacy', LegalDoc> = {
       },
       {
         heading: 'Contact',
-        body: [`Questions or complaints: ${COMPANY.email}. These terms are governed by the laws of the Federal Republic of Nigeria.`],
+        body: [
+          `Questions or complaints: ${COMPANY.email}. These terms are governed by the laws of the Federal Republic of Nigeria.`,
+        ],
       },
     ],
   },
   refunds: {
     title: 'Refund policy',
-    updated: '24 September 2026',
+    updated: '8 October 2026',
     sections: [
       {
         heading: 'Cancelled events',
@@ -89,13 +103,15 @@ export const LEGAL: Record<'terms' | 'refunds' | 'privacy', LegalDoc> = {
       },
       {
         heading: 'Problems with a payment',
-        body: [`If you were charged but did not receive tickets, email ${COMPANY.email} with your order reference (it starts with ARY-). We check every flagged payment.`],
+        body: [
+          `If you were charged but did not receive tickets, email ${COMPANY.email} with your order reference (it starts with ARY-). We check every flagged payment.`,
+        ],
       },
     ],
   },
   privacy: {
     title: 'Privacy policy',
-    updated: '24 September 2026',
+    updated: '8 October 2026',
     sections: [
       {
         heading: 'Our commitment',
@@ -110,7 +126,7 @@ export const LEGAL: Record<'terms' | 'refunds' | 'privacy', LegalDoc> = {
           'Phone number: only if you verify it, to limit free votes to one per person (legitimate interest in fair contests). It is never shown publicly.',
           'Orders: what you bought, answers to the organiser’s checkout questions, and payment references, to deliver tickets and handle refunds (contract; legal obligations for financial records).',
           'Organisers: business and bank details, verified through Paystack, to pay you (contract; fraud prevention).',
-          'Planner data you save on your device stays on your device unless you choose to share an event.',
+          'Device events are stored in this browser. Choosing Save to account uploads the event, including guest contacts and payment records, to Supabase. Committee members you add can read and export it; editors can also change it. Shared plans are cached on your device for continuity. Signing out removes the current account’s cache from this browser. Downloaded backups remain wherever you saved them.',
         ],
       },
       {
@@ -123,7 +139,9 @@ export const LEGAL: Record<'terms' | 'refunds' | 'privacy', LegalDoc> = {
       },
       {
         heading: 'How long we keep it',
-        body: ['Order and payment records are kept for as long as financial regulations require. Other data is deleted or anonymised when no longer needed or when you close your account.'],
+        body: [
+          'Order and payment records are kept for as long as financial regulations require. Other data is deleted or anonymised when no longer needed or when you close your account.',
+        ],
       },
       {
         heading: 'Your rights',

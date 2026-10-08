@@ -7,14 +7,19 @@ import { eventToForm } from '../../lib/eventForm'
 import { formatMoney } from '../../lib/money'
 import { asoebiStats, budgetStats, guestStats, nextSteps } from '../../lib/stats'
 import { usePlanner } from '../../store/planner'
+import { useCloudPlanner } from '../../store/cloudPlanner'
+import { deleteCloudEvent } from '../../lib/plannerSync'
 import { useEventContext } from './context'
 
 export default function Overview() {
-  const { event } = useEventContext()
+  const { event, canEdit, isOwner } = useEventContext()
+  const cloud = useCloudPlanner((s) => s.records[event.id])
   const updateEvent = usePlanner((s) => s.updateEvent)
   const deleteEvent = usePlanner((s) => s.deleteEvent)
   const navigate = useNavigate()
   const [editing, setEditing] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [error, setError] = useState('')
 
   const g = guestStats(event.guests)
   const b = budgetStats(event.budgetItems, event.budget)
@@ -22,10 +27,12 @@ export default function Overview() {
   const steps = nextSteps(event)
   const money = (n: number) => formatMoney(n, event.currency)
 
-  if (editing) {
+  if (editing && canEdit) {
     return (
       <section aria-labelledby="edit-heading" className="max-w-3xl">
-        <h2 id="edit-heading" className="font-display text-3xl">Edit details</h2>
+        <h2 id="edit-heading" className="font-display text-3xl">
+          Edit details
+        </h2>
         <div className="mt-8">
           <EventForm
             initial={eventToForm(event)}
@@ -55,7 +62,9 @@ export default function Overview() {
       label: 'Planned spend',
       value: money(b.planned),
       sub: b.overBudget ? `${money(-b.unallocated)} over budget` : `${money(b.unallocated)} left to allocate`,
-      meter: <Meter value={b.planned} max={event.budget} tone={b.overBudget ? 'red' : 'ink'} label="Budget allocated" />,
+      meter: (
+        <Meter value={b.planned} max={event.budget} tone={b.overBudget ? 'red' : 'ink'} label="Budget allocated" />
+      ),
     },
     {
       to: 'budget',
@@ -98,19 +107,40 @@ export default function Overview() {
         )}
 
         <div className="mt-10 flex flex-wrap gap-3 border-t-2 border-ink pt-6">
-          <Button variant="outline" onClick={() => setEditing(true)}>
+          <Button disabled={!canEdit || deleting} variant="outline" onClick={() => setEditing(true)}>
             Edit details
           </Button>
-          <ConfirmButton
-            variant="ghost"
-            confirmLabel="Delete for good?"
-            onConfirm={() => {
-              deleteEvent(event.id)
-              navigate('/app', { replace: true })
-            }}
-          >
-            Delete event
-          </ConfirmButton>
+          {isOwner && (
+            <ConfirmButton
+              disabled={deleting || Boolean(cloud?.dirty)}
+              variant="ghost"
+              confirmLabel="Delete for good?"
+              onConfirm={() => {
+                void (async () => {
+                  setDeleting(true)
+                  setError('')
+                  try {
+                    if (cloud) await deleteCloudEvent(event.id)
+                    else deleteEvent(event.id)
+                    navigate('/app', { replace: true })
+                  } catch (e) {
+                    setError(e instanceof Error ? e.message : 'Could not delete the event.')
+                    setDeleting(false)
+                  }
+                })()
+              }}
+            >
+              {deleting ? 'Deleting…' : 'Delete event'}
+            </ConfirmButton>
+          )}
+          {cloud?.dirty && isOwner && (
+            <p className="w-full text-sm">Resolve pending changes before deleting this event.</p>
+          )}
+          {error && (
+            <p role="alert" className="w-full text-red">
+              {error}
+            </p>
+          )}
         </div>
       </section>
 
@@ -123,14 +153,37 @@ export default function Overview() {
         ) : (
           <ol className="mt-4 border-t-2 border-ink">
             {steps.map((s, i) => (
-              <li key={s} className="grid grid-cols-[2.25rem_1fr] items-start gap-3 border-b-2 border-ink py-4 text-[0.95rem] font-medium">
-                <span className="tabular font-sign grid h-8 w-8 place-items-center rounded-md border-2 border-ink bg-danfo text-sm">{i + 1}</span>
-                <span className="pt-1">{s}</span>
+              <li
+                key={s}
+                className="grid grid-cols-[2.25rem_1fr] items-start gap-3 border-b-2 border-ink py-4 text-[0.95rem] font-medium"
+              >
+                <span className="tabular font-sign grid h-8 w-8 place-items-center rounded-md border-2 border-ink bg-danfo text-sm">
+                  {i + 1}
+                </span>
+                <Link
+                  className="pt-1 underline decoration-2 underline-offset-4"
+                  to={
+                    s.includes('guest') || s.includes('seats')
+                      ? 'guests'
+                      : s.includes('budget')
+                        ? 'budget'
+                        : s.includes('vendor')
+                          ? 'vendors'
+                          : s.includes('aso-ebi')
+                            ? 'asoebi'
+                            : 'schedule'
+                  }
+                >
+                  {s}
+                </Link>
               </li>
             ))}
           </ol>
         )}
-        <Link to="/app/vendors" className="mt-6 inline-flex items-center gap-1.5 text-sm font-bold underline decoration-2 underline-offset-4 hover:decoration-pink">
+        <Link
+          to="/app/vendors"
+          className="mt-6 inline-flex items-center gap-1.5 text-sm font-bold underline decoration-2 underline-offset-4 hover:decoration-pink"
+        >
           Browse vendors <ArrowRight size={15} aria-hidden="true" />
         </Link>
       </aside>
