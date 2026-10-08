@@ -2,20 +2,23 @@ import { Link, NavLink, Outlet, ScrollRestoration } from 'react-router-dom'
 import { Logo } from '../components/Logo'
 import { buttonClass } from '../components/styles'
 import { useAuth } from '../lib/authContext'
-import { backendReady } from '../lib/env'
+import { backendReady, marketplaceReady } from '../lib/env'
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
-  `shrink-0 rounded-full px-3 py-1.5 text-sm font-bold whitespace-nowrap transition-colors ${
+  `inline-flex min-h-12 items-center shrink-0 rounded-full px-3 py-1.5 text-sm font-bold whitespace-nowrap transition-colors ${
     isActive ? 'bg-ink text-danfo' : 'hover:bg-ink/10'
   }`
 
 export function SiteLayout() {
-  const { user, profile, signOut } = useAuth()
+  const { user, profile } = useAuth()
   const isSeller = profile?.role === 'seller' || profile?.role === 'super_admin'
 
   return (
     <>
-      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-ink focus:px-4 focus:py-2 focus:text-danfo">
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-ink focus:px-4 focus:py-2 focus:text-danfo"
+      >
         Skip to content
       </a>
       <header className="grain relative z-20 border-b-2 border-ink bg-danfo">
@@ -27,12 +30,9 @@ export function SiteLayout() {
           <div className="flex items-center gap-2">
             {backendReady && user ? (
               <>
-                <Link to="/account/tickets" className={buttonClass('ink', 'sm')}>
-                  My tickets
+                <Link to="/app/account" className={buttonClass('ink', 'sm')}>
+                  My account
                 </Link>
-                <button type="button" onClick={() => void signOut()} className="hidden text-sm font-bold hover:underline sm:inline">
-                  Sign out
-                </button>
               </>
             ) : backendReady ? (
               <Link to="/signin" className={buttonClass('ink', 'sm')}>
@@ -56,16 +56,32 @@ export function SiteLayout() {
         <div className="mx-auto grid max-w-[1280px] gap-8 px-5 py-12 sm:grid-cols-2 sm:px-8">
           <div>
             <Logo />
-            <p className="mt-4 max-w-xs text-sm text-white/70">Loud celebrations, calm planning. Made in Lagos, for everywhere we gather.</p>
+            <p className="mt-4 max-w-xs text-sm text-white/70">
+              Loud celebrations, calm planning. Made in Lagos, for everywhere we gather.
+            </p>
           </div>
           <div className="flex flex-col gap-4 sm:items-end">
             <nav aria-label="Legal" className="flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold text-white/80">
-              <Link to="/legal/terms" className="hover:text-danfo">Terms</Link>
-              <Link to="/legal/refunds" className="hover:text-danfo">Refund policy</Link>
-              <Link to="/legal/privacy" className="hover:text-danfo">Privacy</Link>
-              <Link to="/sell" className="hover:text-danfo">Sell tickets</Link>
+              <Link to="/legal/terms" className="hover:text-danfo">
+                Terms
+              </Link>
+              {marketplaceReady && (
+                <Link to="/legal/refunds" className="hover:text-danfo">
+                  Refund policy
+                </Link>
+              )}
+              <Link to="/legal/privacy" className="hover:text-danfo">
+                Privacy
+              </Link>
+              {marketplaceReady && (
+                <Link to="/sell" className="hover:text-danfo">
+                  Sell tickets
+                </Link>
+              )}
             </nav>
-            <p className="tabular text-sm text-white/60">© {new Date().getFullYear()} Ariya · Ẹ ṣé o, thank you for celebrating with us.</p>
+            <p className="tabular text-sm text-white/60">
+              © {new Date().getFullYear()} Ariya · Ẹ ṣé o, thank you for celebrating with us.
+            </p>
           </div>
         </div>
       </footer>
@@ -77,16 +93,20 @@ export function SiteLayout() {
 function NavItems({ isSeller, isAdmin }: { isSeller: boolean; isAdmin: boolean }) {
   return (
     <>
-      <NavLink to="/events" className={linkClass}>
-        Events
-      </NavLink>
+      {marketplaceReady && (
+        <NavLink to="/events" className={linkClass}>
+          Events
+        </NavLink>
+      )}
       <NavLink to="/app" className={linkClass}>
         Planner
       </NavLink>
-      <NavLink to={isSeller ? '/seller' : '/sell'} className={linkClass}>
-        {isSeller ? 'My events' : 'Sell tickets'}
-      </NavLink>
-      {isAdmin && (
+      {marketplaceReady && (
+        <NavLink to={isSeller ? '/seller' : '/sell'} className={linkClass}>
+          {isSeller ? 'My events' : 'Sell tickets'}
+        </NavLink>
+      )}
+      {marketplaceReady && isAdmin && (
         <NavLink to="/admin" className={linkClass}>
           Admin
         </NavLink>

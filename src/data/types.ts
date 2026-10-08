@@ -1,12 +1,6 @@
 export type Currency = 'NGN' | 'GHS' | 'KES' | 'ZAR' | 'USD'
 
-export type EventType =
-  | 'trad-wedding'
-  | 'white-wedding'
-  | 'owambe'
-  | 'naming'
-  | 'remembrance'
-  | 'corporate'
+export type EventType = 'trad-wedding' | 'white-wedding' | 'owambe' | 'naming' | 'remembrance' | 'corporate'
 
 export type Rsvp = 'pending' | 'yes' | 'maybe' | 'no'
 
@@ -46,6 +40,7 @@ export type VendorStatus = 'enquired' | 'booked' | 'deposit' | 'paid'
 export interface BookedVendor {
   vendorId: string
   status: VendorStatus
+  custom?: { name: string; category: VendorCategory; phone: string; notes: string; quote: number }
 }
 
 export interface ScheduleItem {
@@ -61,6 +56,10 @@ export interface AsoebiBuyer {
   sets: number
   paid: boolean
   collected: boolean
+  /** Absolute amount received. Missing only on legacy browser records. */
+  amountPaid?: number
+  paymentDate?: string
+  notes?: string
 }
 
 export interface Asoebi {

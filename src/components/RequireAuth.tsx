@@ -9,9 +9,9 @@ export function BackendMissing() {
   return (
     <div className="mx-auto max-w-xl px-5 py-20 text-center">
       <p className="font-sign text-4xl text-pink">Almost ready</p>
-      <h1 className="font-display mt-4 text-2xl">Ticketing is being connected.</h1>
+      <h1 className="font-display mt-4 text-2xl">Online accounts are being connected.</h1>
       <p className="mt-2 font-medium text-ink-soft">
-        This part of Ariya needs the Supabase backend. Until it is connected you can still use the free planner.
+        You can start planning on this device now. Online saving will be available when account setup is complete.
       </p>
       <Link to="/app" className={buttonClass('ink', 'md', 'mt-8')}>
         Open the planner
@@ -22,9 +22,18 @@ export function BackendMissing() {
 
 /** Shows children only to signed-in users (optionally with a role). */
 export function RequireAuth({ children, role }: { children: ReactNode; role?: Role | Role[] }) {
-  const { loading, user, profile } = useAuth()
+  const { loading, user, profile, error } = useAuth()
   const location = useLocation()
   if (!backendReady) return <BackendMissing />
+  if (error)
+    return (
+      <div className="mx-auto max-w-xl p-8">
+        <p role="alert">{error}</p>
+        <button type="button" className={buttonClass('ink', 'md', 'mt-4')} onClick={() => window.location.reload()}>
+          Try again
+        </button>
+      </div>
+    )
   if (loading || (user && !profile)) return <PageLoader />
   if (!user) return <Navigate to={`/signin?next=${encodeURIComponent(location.pathname + location.search)}`} replace />
   const roles = role ? (Array.isArray(role) ? role : [role]) : null

@@ -78,6 +78,9 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  button:disabled { cursor: not-allowed; }
+  input, select, textarea { max-width: 100%; }
+
   ::selection {
     background: var(--color-pink);
     color: var(--color-white);
@@ -104,6 +107,15 @@
       transition-duration: 0.01ms !important;
     }
   }
+}
+
+@media print {
+  body { background: white; }
+  body * { visibility: hidden; }
+  .programme-print, .programme-print * { visibility: visible; }
+  .programme-print { position: absolute; inset: 0; padding: 24px; }
+  .programme-print .no-print { display: none !important; }
+  .programme-print li { break-inside: avoid; }
 }
 
 @utility tabular {

@@ -20,6 +20,7 @@ password, region closest to your users (for Nigeria, London `eu-west-2`).
 3. `20260924000003_marketplace.sql`
 4. `20260924000004_media_storage.sql`
 5. `20260924000005_expire_orders.sql` (also schedules a job every 10 minutes that tidies up unpaid orders)
+6. `20261008000006_planner_sync.sql` (atomic planner saves, revisions, custom vendors and partial aso-ebi payments)
 
 If one fails, stop and send the error; do not re-run it.
 
@@ -77,6 +78,9 @@ In Vercel → **Settings → Environment Variables** add:
 - `VITE_SUPABASE_ANON_KEY` = anon public key
 
 Redeploy. The anon key is public by design; row level security protects the data.
+Also supply the operator and launch variables in `../.env.example`; follow
+`../PRODUCTION.md`. Keep `VITE_MARKETPLACE_ENABLED=false` until ticketing has
+passed its separate staging checks. Planner accounts can launch independently.
 **The service_role key and Paystack secret key must never go into Vercel,
 `VITE_` variables, GitHub or a chat message.**
 
