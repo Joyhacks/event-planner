@@ -53,7 +53,7 @@ describe('stats', () => {
       { id: '2', name: 'B', phone: '', group: 'family', rsvp: 'maybe', plusOnes: 0 },
       { id: '3', name: 'C', phone: '', group: 'family', rsvp: 'no', plusOnes: 1 },
     ])
-    expect(s).toEqual({ invites: 3, heads: 6, coming: 3, pending: 1, declined: 2 })
+    expect(s).toEqual({ invites: 3, heads: 6, coming: 3, pending: 0, maybe: 1, declined: 2 })
   })
   it('flags over-budget plans', () => {
     const s = budgetStats(

@@ -11,7 +11,7 @@ import { daysUntil, formatDate, formatTime } from '../lib/dates'
 import { formatMoney } from '../lib/money'
 import { asoebiStats, budgetStats, guestStats, nextEvent } from '../lib/stats'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
-import { usePlanner } from '../store/planner'
+import { useAllEvents, usePlanner } from '../store/planner'
 
 function greeting(now = new Date()) {
   const h = now.getHours()
@@ -22,7 +22,7 @@ function greeting(now = new Date()) {
 
 export default function Dashboard() {
   useDocumentTitle('My events')
-  const events = usePlanner((s) => s.events)
+  const events = useAllEvents()
   const loadSample = usePlanner((s) => s.loadSample)
   const navigate = useNavigate()
 
@@ -89,7 +89,10 @@ function NextUp({ event }: { event: PlannerEvent }) {
       aria-labelledby="next-up"
       className="mt-10 grid overflow-hidden rounded-lg border-2 border-ink bg-card shadow-hard lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]"
     >
-      <div className="relative overflow-hidden border-b-2 border-ink p-7 sm:p-9 lg:border-r-2 lg:border-b-0" style={{ background: meta.bg, color: meta.fg }}>
+      <div
+        className="relative overflow-hidden border-b-2 border-ink p-7 sm:p-9 lg:border-r-2 lg:border-b-0"
+        style={{ background: meta.bg, color: meta.fg }}
+      >
         <Motif kind={meta.motif} color={meta.accent} opacity={0.12} />
         <div className="relative">
           <p className="inline-flex rounded-full border-2 border-ink bg-white px-3 py-1 text-[0.7rem] font-extrabold tracking-[0.12em] text-ink uppercase">
@@ -115,17 +118,18 @@ function NextUp({ event }: { event: PlannerEvent }) {
           <div>
             <dt className="text-[0.7rem] font-bold tracking-[0.12em] text-ink-faint uppercase">Guests coming</dt>
             <dd className="tabular mt-1 text-2xl font-extrabold">
-              {g.coming} <span className="text-base font-semibold text-ink-faint">/ {event.guestTarget || g.heads}</span>
+              {g.coming}{' '}
+              <span className="text-base font-semibold text-ink-faint">/ {event.guestTarget || g.heads}</span>
             </dd>
             <div className="mt-2">
               <Meter value={g.coming} max={event.guestTarget || g.heads} tone="green" label="Guests confirmed" />
             </div>
           </div>
           <div>
-            <dt className="text-[0.7rem] font-bold tracking-[0.12em] text-ink-faint uppercase">Paid so far</dt>
+            <dt className="text-[0.7rem] font-bold tracking-[0.12em] text-ink-faint uppercase">Paid against plan</dt>
             <dd className="tabular mt-1 text-2xl font-extrabold">{formatMoney(b.paid, event.currency)}</dd>
             <div className="mt-2">
-              <Meter value={b.paid} max={event.budget} tone="blue" label="Budget paid" />
+              <Meter value={b.paid} max={b.planned} tone="blue" label="Planned spend paid" />
             </div>
           </div>
           <div>

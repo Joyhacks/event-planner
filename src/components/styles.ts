@@ -13,14 +13,14 @@ const VARIANTS: Record<Variant, string> = {
 }
 
 const SIZES: Record<Size, string> = {
-  sm: 'h-9 px-3.5 text-[0.82rem]',
-  md: 'h-11 px-5 text-[0.92rem]',
+  sm: 'min-h-12 py-2 px-3.5 text-[0.82rem]',
+  md: 'min-h-12 py-2 px-5 text-[0.92rem]',
   lg: 'h-14 px-7 text-base',
 }
 
 export function buttonClass(variant: Variant = 'ink', size: Size = 'md', extra = '') {
-  return `inline-flex items-center justify-center gap-2 rounded-md font-bold [font-stretch:112%] whitespace-nowrap transition-[transform,box-shadow,background-color] duration-150 disabled:pointer-events-none disabled:opacity-40 ${VARIANTS[variant]} ${SIZES[size]} ${extra}`
+  return `inline-flex items-center justify-center gap-2 rounded-md font-bold [font-stretch:112%] text-center transition-[transform,box-shadow,background-color] duration-150 disabled:pointer-events-none disabled:opacity-40 ${VARIANTS[variant]} ${SIZES[size]} ${extra}`
 }
 
 export const fieldClass =
-  'w-full h-11 rounded-md border-2 border-line-strong bg-card px-3 text-ink placeholder:text-ink-faint transition-[border-color,box-shadow] hover:border-ink-soft focus:border-ink focus:shadow-hard-sm focus:outline-none aria-[invalid=true]:border-red'
+  'w-full min-w-0 h-12 rounded-md border-2 border-line-strong bg-card px-3 text-ink placeholder:text-ink-faint transition-[border-color,box-shadow] hover:border-ink-soft focus:border-ink focus:shadow-hard-sm focus:outline-none aria-[invalid=true]:border-red'

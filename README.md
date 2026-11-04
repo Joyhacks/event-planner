@@ -6,10 +6,12 @@ collection, vendors, the order of events and a budget in local currency.
 
 ## What's inside
 
-**Planner** (`/app`, saved in the browser for now): guest list with RSVPs,
-budget in naira, vendors, order of events, aso-ebi ledger with WhatsApp share.
+**Planner** (`/app`): device events with optional account saving and committee
+roles; guest RSVPs and CSV import/export; budgets; custom vendors; editable,
+printable programmes; aso-ebi deposits and collection; JSON backup/restore.
+See [PRODUCTION.md](./PRODUCTION.md) for configuration and release gates.
 
-**Marketplace** (needs the Supabase backend, see `supabase/README.md`):
+**Marketplace** (needs Supabase and an explicit launch flag, see `supabase/README.md`):
 
 | Who | What they can do |
 |---|---|
@@ -41,6 +43,8 @@ npm run dev        # http://localhost:5173
 | `npm run lint` | ESLint |
 | `npm test` | Unit tests for dates, money, stats, validation, CSV and WhatsApp text |
 | `npm run preview` | Serve the production build |
+| `npm run check` | Application checks, portable database/security tests and build |
+| `npm run check:launch` | Validate required production configuration |
 
 Deploys as a static site. `vercel.json` and `public/_redirects` (Netlify) send
 every route to `index.html`.
@@ -81,6 +85,6 @@ Design rules are in [DESIGN.md](./DESIGN.md).
 
 1. Follow `supabase/README.md` end to end, with Paystack **test** keys first,
    including custom SMTP for sign-in emails.
-2. Have a lawyer review `src/pages/legal/legalContent.ts` and fill in the company details.
+2. Review `src/pages/legal/legalContent.ts`, supply real operator details through the environment, and complete [PRODUCTION.md](./PRODUCTION.md).
 3. Confirm current Paystack fees and set them in **Admin → Commission & fees**.
 4. Make one real purchase, scan it at a door, cancel, and confirm the refund lands.

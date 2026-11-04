@@ -10,6 +10,7 @@ export interface Profile {
 }
 
 export interface AuthState {
+  error: string
   loading: boolean
   session: Session | null
   user: User | null
