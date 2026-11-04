@@ -7,15 +7,16 @@ import { VendorCard } from '../components/VendorCard'
 import { VENDOR_CATEGORY_LABEL } from '../data/catalog'
 import type { VendorCategory } from '../data/types'
 import { VENDORS } from '../data/vendors'
+import { useCloudPlanner } from '../store/cloudPlanner'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
-import { usePlanner } from '../store/planner'
+import { useAllEvents, usePlanner } from '../store/planner'
 
 const CITY_OPTIONS = [...new Set(VENDORS.map((v) => v.city))].sort()
 
 export default function Vendors() {
   useDocumentTitle('Vendors')
   const [params, setParams] = useSearchParams()
-  const events = usePlanner((s) => s.events)
+  const events = useAllEvents()
   const setVendorStatus = usePlanner((s) => s.setVendorStatus)
 
   const [query, setQuery] = useState('')
@@ -25,7 +26,11 @@ export default function Vendors() {
   const [targetId, setTargetId] = useState(() =>
     events.some((e) => e.id === eventParam) ? eventParam! : (events[0]?.id ?? ''),
   )
-  const target = events.find((e) => e.id === targetId)
+  const records = useCloudPlanner((s) => s.records)
+  const editableEvents = events.filter(
+    (e) => !records[e.id] || (records[e.id]?.role !== 'viewer' && !records[e.id]?.conflict),
+  )
+  const target = editableEvents.find((e) => e.id === targetId)
 
   const setParam = (key: string, value: string | null) => {
     const next = new URLSearchParams(params)
@@ -46,7 +51,14 @@ export default function Vendors() {
 
   return (
     <div className="mx-auto max-w-[1180px] px-5 pt-8 sm:px-8 lg:pt-12">
-      <PageHeader eyebrow="Directory" title={<>Vendors who <em className="hl">show up.</em></>} />
+      <PageHeader
+        eyebrow="Directory"
+        title={
+          <>
+            Vendors who <em className="hl">show up.</em>
+          </>
+        }
+      />
       <p className="mt-4 max-w-2xl text-sm text-ink-soft">
         Demo listings for trying out the planner. Vendor sign-up and verified reviews are on the way.
       </p>
@@ -59,7 +71,7 @@ export default function Vendors() {
               type="button"
               aria-pressed={category === c}
               onClick={() => setParam('category', c)}
-              className={`h-9 shrink-0 rounded-full px-3.5 text-sm font-bold transition-colors ${
+              className={`h-12 shrink-0 rounded-full px-3.5 text-sm font-bold transition-colors ${
                 category === c ? 'bg-ink text-danfo' : 'text-ink-soft hover:bg-paper-2'
               }`}
             >
@@ -67,11 +79,16 @@ export default function Vendors() {
             </button>
           ))}
         </div>
-        <div className="grid gap-3 sm:grid-cols-[1fr_12rem_16rem]">
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_12rem_16rem]">
           <label className="relative">
             <span className="sr-only">Search vendors</span>
             <Search size={16} className="absolute top-1/2 left-3 -translate-y-1/2 text-ink-faint" aria-hidden="true" />
-            <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Jollof, gele, amapiano…" className="pl-9" />
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Jollof, gele, amapiano…"
+              className="pl-9"
+            />
           </label>
           <Select aria-label="City" value={city} onChange={(e) => setParam('city', e.target.value || null)}>
             <option value="">All cities</option>
@@ -83,7 +100,7 @@ export default function Vendors() {
           </Select>
           {events.length > 0 && (
             <Select aria-label="Add vendors to event" value={targetId} onChange={(e) => setTargetId(e.target.value)}>
-              {events.map((e) => (
+              {editableEvents.map((e) => (
                 <option key={e.id} value={e.id}>
                   Adding to: {e.title}
                 </option>

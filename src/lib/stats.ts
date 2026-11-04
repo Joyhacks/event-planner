@@ -6,14 +6,16 @@ export function guestStats(guests: Guest[]) {
   let coming = 0
   let pending = 0
   let declined = 0
+  let maybe = 0
   for (const g of guests) {
     const party = 1 + g.plusOnes
     heads += party
     if (g.rsvp === 'yes') coming += party
     else if (g.rsvp === 'no') declined += party
+    else if (g.rsvp === 'maybe') maybe += party
     else pending += party
   }
-  return { invites: guests.length, heads, coming, pending, declined }
+  return { invites: guests.length, heads, coming, pending, maybe, declined }
 }
 
 export function budgetStats(items: BudgetItem[], budget: number) {
@@ -22,7 +24,7 @@ export function budgetStats(items: BudgetItem[], budget: number) {
   return {
     planned,
     paid,
-    outstanding: Math.max(planned - paid, 0),
+    outstanding: items.reduce((sum, i) => sum + Math.max(i.planned - i.paid, 0), 0),
     unallocated: budget - planned,
     overBudget: planned > budget,
   }
@@ -36,9 +38,7 @@ export function budgetByCategory(items: BudgetItem[]) {
     row.paid += i.paid
     map.set(i.category, row)
   }
-  return [...map.entries()]
-    .map(([category, v]) => ({ category, ...v }))
-    .sort((a, b) => b.planned - a.planned)
+  return [...map.entries()].map(([category, v]) => ({ category, ...v })).sort((a, b) => b.planned - a.planned)
 }
 
 export function asoebiStats(asoebi: Asoebi | null) {
@@ -46,20 +46,21 @@ export function asoebiStats(asoebi: Asoebi | null) {
   let sets = 0
   let collected = 0
   let received = 0
+  let owing = 0
   for (const b of asoebi.buyers) {
     sets += b.sets
     if (b.collected) collected += b.sets
-    if (b.paid) received += b.sets * asoebi.pricePerSet
+    const paid = b.amountPaid ?? (b.paid ? b.sets * asoebi.pricePerSet : 0)
+    received += paid
+    owing += Math.max(0, b.sets * asoebi.pricePerSet - paid)
   }
   const expected = sets * asoebi.pricePerSet
-  return { sets, collected, expected, received, owing: expected - received }
+  return { sets, collected, expected, received, owing }
 }
 
 /** The soonest event that has not passed yet. */
 export function nextEvent(events: PlannerEvent[], now = new Date()): PlannerEvent | undefined {
-  return [...events]
-    .filter((e) => daysUntil(e.date, now) >= 0)
-    .sort((a, b) => a.date.localeCompare(b.date))[0]
+  return [...events].filter((e) => daysUntil(e.date, now) >= 0).sort((a, b) => a.date.localeCompare(b.date))[0]
 }
 
 /** Short, actionable reminders for the overview tab. */
@@ -68,6 +69,8 @@ export function nextSteps(event: PlannerEvent): string[] {
   const g = guestStats(event.guests)
   if (event.guests.length === 0) steps.push('Start the guest list, even a rough one helps the caterer quote.')
   else if (g.pending > 0) steps.push(`${g.pending} ${g.pending === 1 ? 'guest has' : 'guests have'} not replied yet.`)
+
+  if (g.maybe > 0) steps.push(`${g.maybe} seats are marked maybe. Confirm these before the catering count.`)
 
   const b = budgetStats(event.budgetItems, event.budget)
   if (b.overBudget) steps.push('Planned spend is above your budget. Trim a line or raise the ceiling.')

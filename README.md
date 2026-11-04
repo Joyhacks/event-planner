@@ -6,23 +6,28 @@ collection, vendors, the order of events and a budget in local currency.
 
 ## What's inside
 
-| Area | What it does |
-|---|---|
-| Landing page | Marketing page at `/` |
-| My events | Countdown to the next event, all events shown as tickets |
-| Event overview | Summary numbers and suggested next steps; edit or delete the event |
-| Guests | RSVP tracking, plus-ones, filters, search, CSV export for the gate |
-| Budget | Planned vs paid per line, inline editing, category breakdown, over-budget warning |
-| Vendors | Shortlist from the directory and track status from enquired to fully paid |
-| Order of events | Timeline for the MC, DJ and caterer |
-| Aso-ebi | Fabric, price and colours; who paid and who collected; share to WhatsApp |
+**Planner** (`/app`): device events with optional account saving and committee
+roles; guest RSVPs and CSV import/export; budgets; custom vendors; editable,
+printable programmes; aso-ebi deposits and collection; JSON backup/restore.
+See [PRODUCTION.md](./PRODUCTION.md) for configuration and release gates.
 
-Data is saved in the browser (localStorage) for now. See *Next steps*.
+**Marketplace** (needs Supabase and an explicit launch flag, see `supabase/README.md`):
+
+| Who | What they can do |
+|---|---|
+| Buyers | Browse events, buy single or table tickets, add aso-ebi, apply promo codes, pay with Paystack, keep QR tickets, request refunds for postponed events, vote |
+| Sellers | Apply with a Paystack-verified bank account; build events with ticket types, early bird, free VIP comps, promo codes, promoter links, custom questions and fee choice; sell aso-ebi; run voting contests; see sales and promoter commissions; refund; postpone or cancel; manage door staff |
+| Door staff | Scan QR codes by camera or type the code; keeps working offline and syncs later |
+| Admins | Approve or reject sellers, set commission and fees, review flagged payments, send refunds, suspend sellers |
+
+Money never sits with Ariya: Paystack split payments send each seller's share
+to their own bank account. See `ROADMAP.md` for the reasoning.
 
 ## Stack
 
 React 19, TypeScript (strict), Vite, Tailwind CSS v4 with custom tokens,
-Archivo + Bungee (self-hosted),
+Archivo + Bungee (self-hosted), Supabase (Postgres, Auth, Realtime, Storage,
+Edge Functions), Paystack, TanStack Query,
 React Router (route-level code splitting), Zustand, Vitest.
 
 ## Run it
@@ -38,6 +43,8 @@ npm run dev        # http://localhost:5173
 | `npm run lint` | ESLint |
 | `npm test` | Unit tests for dates, money, stats, validation, CSV and WhatsApp text |
 | `npm run preview` | Serve the production build |
+| `npm run check` | Application checks, portable database/security tests and build |
+| `npm run check:launch` | Validate required production configuration |
 
 Deploys as a static site. `vercel.json` and `public/_redirects` (Netlify) send
 every route to `index.html`.
@@ -56,10 +63,28 @@ src/
 
 Design rules are in [DESIGN.md](./DESIGN.md).
 
-## Next steps before a public launch
+## Deploying on Vercel
 
-1. **Accounts and a real database** (e.g. Supabase) so a planning committee can share one event across phones. Every table needs row-level security scoped to the event's members.
-2. **Real vendor directory.** The listings in `src/data/vendors.ts` are demo data and are labelled as such in the UI.
-3. **Guest RSVP link** so guests can reply themselves.
-4. **Paystack or Flutterwave** for aso-ebi payments, with verified webhooks.
-5. Analytics and error monitoring (for example Sentry).
+- `vercel.json` sends every page to the app, except that link-preview bots
+  (WhatsApp, Facebook, X, Telegram…) visiting `/e/…` get `api/share.ts`,
+  which returns the event's title, date, venue and photo so shared links
+  show a proper preview.
+- Environment variables: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, and
+  optionally `VITE_SENTRY_DSN` for error alerts (sentry.io, React project).
+
+## Custom domain
+
+1. Buy the domain: `.ng` / `.com.ng` from a NiRA-accredited registrar, or `.com`
+   from any registrar.
+2. Vercel → your project → **Settings → Domains** → add it, then add the DNS
+   records Vercel shows at your registrar. HTTPS is automatic.
+3. Update Supabase **Authentication → URL Configuration** (Site URL and
+   Redirect URLs) and the `APP_ORIGIN` function secret to the new domain.
+
+## Before a public launch
+
+1. Follow `supabase/README.md` end to end, with Paystack **test** keys first,
+   including custom SMTP for sign-in emails.
+2. Review `src/pages/legal/legalContent.ts`, supply real operator details through the environment, and complete [PRODUCTION.md](./PRODUCTION.md).
+3. Confirm current Paystack fees and set them in **Admin → Commission & fees**.
+4. Make one real purchase, scan it at a door, cancel, and confirm the refund lands.

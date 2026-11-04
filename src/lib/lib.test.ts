@@ -53,7 +53,7 @@ describe('stats', () => {
       { id: '2', name: 'B', phone: '', group: 'family', rsvp: 'maybe', plusOnes: 0 },
       { id: '3', name: 'C', phone: '', group: 'family', rsvp: 'no', plusOnes: 1 },
     ])
-    expect(s).toEqual({ invites: 3, heads: 6, coming: 3, pending: 1, declined: 2 })
+    expect(s).toEqual({ invites: 3, heads: 6, coming: 3, pending: 0, maybe: 1, declined: 2 })
   })
   it('flags over-budget plans', () => {
     const s = budgetStats(
@@ -112,5 +112,24 @@ describe('sharing and export', () => {
   })
   it('escapes CSV cells and blocks spreadsheet formulas', () => {
     expect(toCsv([['Ade "Big" O', '=HYPERLINK("x")']])).toBe('"Ade ""Big"" O","\'=HYPERLINK(""x"")"')
+  })
+})
+
+describe('phone numbers', () => {
+  it('normalises Nigerian numbers to E.164', async () => {
+    const { toE164Nigeria } = await import('./phone')
+    expect(toE164Nigeria('0803 123 4567')).toBe('2348031234567')
+    expect(toE164Nigeria('+234 803 123 4567')).toBe('2348031234567')
+    expect(toE164Nigeria('+44 7700 900123')).toBe('447700900123')
+    expect(toE164Nigeria('12345')).toBeNull()
+  })
+})
+
+describe('monitoring', () => {
+  it('strips query strings that may hold sign-in codes', async () => {
+    const { scrubUrl } = await import('./monitoring')
+    expect(scrubUrl('https://ariya.ng/account/tickets?code=secret')).toBe('https://ariya.ng/account/tickets')
+    expect(scrubUrl('https://ariya.ng/e/x')).toBe('https://ariya.ng/e/x')
+    expect(scrubUrl(undefined)).toBeUndefined()
   })
 })

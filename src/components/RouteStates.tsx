@@ -1,4 +1,6 @@
+import { useEffect } from 'react'
 import { Link, isRouteErrorResponse, useRouteError } from 'react-router-dom'
+import { reportError } from '../lib/monitoring'
 import { buttonClass } from './styles'
 
 export function PageLoader() {
@@ -16,7 +18,10 @@ export function PageLoader() {
 export function RouteError() {
   const error = useRouteError()
   const notFound = isRouteErrorResponse(error) && error.status === 404
-  if (import.meta.env.DEV) console.error(error)
+  useEffect(() => {
+    if (import.meta.env.DEV) console.error(error)
+    if (!notFound) reportError(error)
+  }, [error, notFound])
 
   return (
     <main className="mx-auto flex min-h-screen max-w-xl flex-col justify-center px-6 py-20">
